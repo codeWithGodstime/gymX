@@ -29,7 +29,6 @@ SHARED_APPS = (
     "allauth.account",
     "crispy_forms",
     "crispy_bootstrap5",
-    "debug_toolbar", 
 )
 
 TENANT_APPS = ("tenant_app", )
@@ -38,13 +37,15 @@ INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in S
 TENANT_MODEL = "accounts.Gym"
 TENANT_DOMAIN_MODEL = "accounts.Domain"
 
+SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
+PUBLIC_SCHEMA_URLCONF = "accounts.urls"
+
 MIDDLEWARE = [
     "django_tenants.middleware.main.TenantMainMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # WhiteNoise
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -71,7 +72,7 @@ TEMPLATES = [
         },
     },
 ]
-
+  
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django_tenants.postgresql_backend",

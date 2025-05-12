@@ -4,13 +4,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/", include("allauth.urls")),
+    path("", include("accounts.urls")),
     path("", include("tenant_app.urls"))
 ]
-
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns = [
-        path("__debug__/", include(debug_toolbar.urls)),
-    ] + urlpatterns
