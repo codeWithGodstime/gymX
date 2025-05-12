@@ -1,0 +1,131 @@
+{% extends "./base.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<!-- summary -->
+<div class="row mb-5">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Membership Stats</h5>
+            </div>
+            <div class="card-body">
+
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Members
+                        <span class="badge bg-primary rounded-pill">120</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        New Members This Month
+                        <span class="badge bg-success rounded-pill">15</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Upcoming Renewals (Next 30 Days)
+                        <span class="badge bg-warning text-dark rounded-pill">8</span>
+                    </li>
+                </ul>
+                <a href="/members" class="btn btn-outline-primary w-100">View All Members</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Subscription Stats</h5>
+            </div>
+            <div class="card-body">
+                
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Active Subscriptions
+                        <span class="badge bg-primary rounded-pill">87</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Average Monthly Revenue
+                        <span class="badge bg-success rounded-pill">$420</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Revenue
+                        <span class="badge bg-dark rounded-pill">$15,600</span>
+                    </li>
+                </ul>
+                <a href="/subscriptions" class="btn btn-outline-primary w-100">View Subscriptions</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <h5 class="card-header">Upcoming Renewals</h5>
+            <div class="x_content">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <!-- <th>#</th> -->
+                            <th>Name</th>
+                            <th>Expiration Date</th>
+                            <th>Days left</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card">
+            <h5 class="card-header">New Members</h5>
+            <div class="x_content">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <!-- <th>#</th> -->
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Expiration Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Larry</td>
+                            <td>the Bird</td>
+                            <td>@twitter</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
