@@ -1,14 +1,21 @@
+import os
 from pathlib import Path
+import environ
+
+env = environ.Env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = "django-insecure-0peo@#x9jur3!h$ryje!$879xww8y1y66jx!%*#ymhg&jkozs2"
+SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
 
-INSTALLED_APPS = [
+SHARED_APPS = (
+    "django_tenants",   
+    "accounts",  
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -23,12 +30,16 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "debug_toolbar", 
-    # Local
-    "accounts",
-    "tenant_app"
-]
+)
+
+TENANT_APPS = ("tenant_app", )
+INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
+
+TENANT_MODEL = "accounts.Gym"
+TENANT_DOMAIN_MODEL = "accounts.Domain"
 
 MIDDLEWARE = [
+    "django_tenants.middleware.main.TenantMainMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # WhiteNoise
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -41,13 +52,10 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",  # django-allauth
 ]
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#root-urlconf
 ROOT_URLCONF = "django_project.urls"
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
 WSGI_APPLICATION = "django_project.wsgi.application"
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#templates
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -64,25 +72,31 @@ TEMPLATES = [
     },
 ]
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#databases
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django_tenants.postgresql_backend",
+#         "NAME": env("POSTGRES_DB"),
+#         "USER": env("POSTGRES_USER"),
+#         "PASSWORD": env("POSTGRES_PASSWORD"),
+#         "HOST": env("POSTGRES_HOST"),
+#         "PORT": 5432,
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django_tenants.postgresql_backend",
+        "NAME": "gym",
+        "USER": "postgres",
+        "PASSWORD": "timetokill01",
+        "HOST": env("POSTGRES_HOST"),
+        "PORT": 5432,
     }
 }
 
-# For Docker/PostgreSQL usage uncomment this and comment the DATABASES config above
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "",
-#         "USER": "postgres",
-#         "PASSWORD": "postgres",
-#         "HOST": "db",  # set in docker-compose.yml
-#         "PORT": 5432,  # default postgres port
-#     }
-# }
+DATABASE_ROUTERS = (
+    'django_tenants.routers.TenantSyncRouter',
+)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -101,13 +115,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
 TIME_ZONE = "UTC"
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-USE_I18N
 USE_I18N = True
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 
 LOCALE_PATHS = [BASE_DIR / "locale"]
