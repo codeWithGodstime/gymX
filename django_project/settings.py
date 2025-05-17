@@ -11,34 +11,39 @@ SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = []
 
 SHARED_APPS = (
     "django_tenants",   
-    "accounts",  
-    "django.contrib.admin",
-    "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.sites",
-    # Third-party
+    "accounts",
+    "django.contrib.auth",
+    "django.contrib.admin",
+
     "allauth",
     "allauth.account",
+
+    "public_app",
     "crispy_forms",
     "crispy_bootstrap5",
 )
 
-TENANT_APPS = ("tenant_app", )
+TENANT_APPS = (
+    "tenant_app",
+    )
+
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
-TENANT_MODEL = "accounts.Gym"
-TENANT_DOMAIN_MODEL = "accounts.Domain"
+TENANT_MODEL = "public_app.Client"
+TENANT_DOMAIN_MODEL = "public_app.Domain"
 
 SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
-PUBLIC_SCHEMA_URLCONF = "accounts.urls"
+# PUBLIC_SCHEMA_URLCONF = "public_app.urls"
 
 MIDDLEWARE = [
     "django_tenants.middleware.main.TenantMainMiddleware",
@@ -84,13 +89,14 @@ TEMPLATES = [
 #     }
 # }
 
+  
 DATABASES = {
     "default": {
         "ENGINE": "django_tenants.postgresql_backend",
-        "NAME": "gym",
+        "NAME": "gym_project",
         "USER": "postgres",
         "PASSWORD": "timetokill01",
-        "HOST": env("POSTGRES_HOST"),
+        "HOST": "localhost",
         "PORT": 5432,
     }
 }
@@ -181,8 +187,10 @@ ACCOUNT_FORMS = {
     'login': 'accounts.forms.CustomLoginForm'
 }
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-trusted-origins
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",  # Default Django dev server
     "http://127.0.0.1:8000",  # Alternative local address
 ]
+
+# DOMAIN_HOST = env("DOMAIN_HOST", "localhost")
+DOMAIN_HOST = 'localhost:8000'
