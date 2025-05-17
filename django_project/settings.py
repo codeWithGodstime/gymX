@@ -78,28 +78,18 @@ TEMPLATES = [
     },
 ]
   
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django_tenants.postgresql_backend",
-#         "NAME": env("POSTGRES_DB"),
-#         "USER": env("POSTGRES_USER"),
-#         "PASSWORD": env("POSTGRES_PASSWORD"),
-#         "HOST": env("POSTGRES_HOST"),
-#         "PORT": 5432,
-#     }
-# }
-
-  
 DATABASES = {
     "default": {
         "ENGINE": "django_tenants.postgresql_backend",
-        "NAME": "gym_project",
-        "USER": "postgres",
-        "PASSWORD": "timetokill01",
-        "HOST": "localhost",
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("POSTGRES_HOST"),
         "PORT": 5432,
     }
 }
+
+
 
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
@@ -192,5 +182,4 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",  # Alternative local address
 ]
 
-# DOMAIN_HOST = env("DOMAIN_HOST", "localhost")
-DOMAIN_HOST = 'localhost:8000'
+DOMAIN_HOST = env("DOMAIN_HOST")
