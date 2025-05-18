@@ -35,9 +35,6 @@ class GymOwnerSignupView(FormView):
             password=form.cleaned_data['password1'],
             username=form.cleaned_data['gym_name']
         )
-
-        print("DOMAIN SUPPOSED BE CREATED==")
-
         super().form_valid(form, *args, **kwargs)
         tenant_domain = f"{form.cleaned_data['subdomain']}.{settings.DOMAIN_HOST}"
         return redirect(f"http://{tenant_domain}/accounts/login/")

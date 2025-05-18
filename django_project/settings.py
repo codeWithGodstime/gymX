@@ -77,19 +77,17 @@ TEMPLATES = [
         },
     },
 ]
-  
+
 DATABASES = {
     "default": {
         "ENGINE": "django_tenants.postgresql_backend",
-        "NAME": env("POSTGRES_DB"),
-        "USER": env("POSTGRES_USER"),
-        "PASSWORD": env("POSTGRES_PASSWORD"),
-        "HOST": env("POSTGRES_HOST"),
+        "NAME": env("DB_POSTGRES_DB"),
+        "USER": env("DB_POSTGRES_USER"),
+        "PASSWORD": env("DB_POSTGRES_PASSWORD"),
+        "HOST": env("DB_POSTGRES_HOST"),
         "PORT": 5432,
     }
 }
-
-
 
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',

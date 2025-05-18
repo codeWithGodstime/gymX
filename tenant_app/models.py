@@ -15,5 +15,4 @@ class MemberPayment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     expiration_date = models.DateField()
     member = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='member_payments')
-    type = models.CharField(max_length=10, choices=[('one-time', 'one-time'), ('monthly', 'monthly')])
     is_renewal = models.BooleanField(default=False)
