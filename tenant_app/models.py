@@ -6,7 +6,6 @@ class Members(models.Model):
     contact = models.CharField(max_length=16)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-
     type = models.CharField(max_length=10, choices=[('one-time', 'one-time'), ('monthly', 'monthly')])
 
 

@@ -33,7 +33,8 @@ class GymOwnerSignupView(FormView):
         User.objects.create_user(
             email=form.cleaned_data['email'],
             password=form.cleaned_data['password1'],
-            username=form.cleaned_data['gym_name']
+            username=form.cleaned_data['gym_name'],
+            tenant=tenant
         )
         super().form_valid(form, *args, **kwargs)
         tenant_domain = f"{form.cleaned_data['subdomain']}.{settings.DOMAIN_HOST}"

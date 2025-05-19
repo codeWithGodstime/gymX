@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.utils import timezone
 from django.urls import reverse_lazy
 from datetime import date, timedelta
@@ -108,6 +109,7 @@ class NewMemberView(LoginRequiredMixin, FormView):
     form_class = MemberCreationForm
     success_url = reverse_lazy("members_list")
 
+    @transaction.atomic
     def form_valid(self, form):
         name = form.cleaned_data['name']
         contact = form.cleaned_data['contact']
@@ -134,7 +136,6 @@ class NewMemberView(LoginRequiredMixin, FormView):
             amount=amount,
             date_of_payment=today,
             expiration_date=expiration_date,
-            type=member_type,
             is_renewal=False
         )
 
