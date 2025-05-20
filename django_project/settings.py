@@ -11,7 +11,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
 
 SHARED_APPS = (
     "django_tenants",   
@@ -182,9 +182,6 @@ ACCOUNT_FORMS = {
     'login': 'accounts.forms.CustomLoginForm'
 }
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8000",  # Default Django dev server
-    "http://127.0.0.1:8000",  # Alternative local address
-]
+CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS").split(",")
 
 DOMAIN_HOST = env("DOMAIN_HOST")
