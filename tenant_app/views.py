@@ -1,10 +1,11 @@
 from django.db import transaction
+from django.shortcuts import render
 from django.utils import timezone
 from django.urls import reverse_lazy
 from datetime import date, timedelta
-from django.views.generic import TemplateView, ListView, CreateView, FormView
+from django.views.generic import TemplateView, ListView, FormView, View
 from django.db.models import OuterRef, Subquery
-from django.db.models import F, ExpressionWrapper, IntegerField, Value
+from django.db.models import F, ExpressionWrapper, IntegerField, Value, Count, Sum, Avg, DurationField, Min, Max
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -124,13 +125,11 @@ class NewMemberView(LoginRequiredMixin, FormView):
             type=member_type
         )
 
-        # Determine expiration
         if member_type == 'one-time':
             expiration_date = today
         else:  # monthly
             expiration_date = today + timedelta(days=30)
 
-        # Create Payment
         MemberPayment.objects.create(
             member=member,
             amount=amount,
@@ -140,3 +139,58 @@ class NewMemberView(LoginRequiredMixin, FormView):
         )
 
         return super().form_valid(form)
+
+class ReportsDataView(View):
+    def get(self, request, *args, **kwargs):
+
+        current_time = timezone.now()
+
+        renewals_by_month = (
+            MemberPayment.objects.filter(is_renewal=True)
+            .annotate(month=TruncMonth("date_of_payment"))
+            .values("month")
+            .annotate(count=Count("id"))
+        )
+
+        new_signups_by_month = (
+            Members.objects
+            .annotate(month=TruncMonth("created_at"))
+            .values("month")
+            .annotate(count=Count("id"))
+        )
+
+        # 2. Membership Duration (months between first and last payment per member)
+        duration_qs = (
+            MemberPayment.objects
+            .values("member_id")
+            .annotate(
+                start_date=Min("date_of_payment"),
+                end_date=Max("expiration_date")
+            )
+            .annotate(
+                duration=ExpressionWrapper(
+                    F("end_date") - F("start_date"),
+                    output_field=DurationField()
+                )
+            )
+        )
+
+        duration_data = [
+            {"member_id": d["member_id"], "months": d["duration"].days // 30}
+            for d in duration_qs if d["duration"]
+        ]
+
+        monthly_revenue = (
+            MemberPayment.objects
+            .annotate(month=TruncMonth("date_of_payment"))
+            .values("month")
+            .annotate(total=Sum("amount"))
+            .order_by("month")
+        )
+
+        return render(request, "dashboard/reports.html", {
+            "renewals_by_month": list(renewals_by_month),
+            "new_signups_by_month": list(new_signups_by_month),
+            "membership_duration": duration_data,
+            "monthly_revenue": list(monthly_revenue),
+        })

@@ -1,0 +1,148 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">📊 Gym Reports Dashboard</h2>
+
+  <div class="row g-4">
+    <!-- Revenue Chart Card -->
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">📈 Monthly Revenue</h5>
+          <canvas id="revenueChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Renewal Rate Card -->
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">🔁 Renewal Rate Trend</h5>
+          <canvas id="renewalChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Membership Duration Card -->
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">📆 Membership Duration (in months)</h5>
+          <canvas id="durationChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const formatDate = (dateStr) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  };
+
+  // Monthly Revenue Chart
+  const revenueLabels = [
+    {% for item in monthly_revenue %}
+      "{{ item.month|date:'Y-m-d' }}",
+    {% endfor %}
+  ].map(formatDate);
+
+  const revenueData = [
+    {% for item in monthly_revenue %}
+      {{ item.total }},
+    {% endfor %}
+  ];
+
+  new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+      labels: revenueLabels,
+      datasets: [{
+        label: 'Revenue (₦)',
+        data: revenueData,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        fill: true,
+        tension: 0.4
+      }]
+    }
+  });
+
+  // Renewal Rate Chart
+  const renewalLabels = [
+    {% for item in new_signups_by_month %}
+      "{{ item.month|date:'Y-m-d' }}",
+    {% endfor %}
+  ].map(formatDate);
+
+  const newSignupsData = [
+    {% for item in new_signups_by_month %}
+      {{ item.count }},
+    {% endfor %}
+  ];
+
+  const renewalsData = [
+    {% for item in renewals_by_month %}
+      {{ item.count }},
+    {% endfor %}
+  ];
+
+  new Chart(document.getElementById('renewalChart'), {
+    type: 'bar',
+    data: {
+      labels: renewalLabels,
+      datasets: [
+        {
+          label: 'New Signups',
+          data: newSignupsData,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)'
+        },
+        {
+          label: 'Renewals',
+          data: renewalsData,
+          backgroundColor: 'rgba(255, 99, 132, 0.5)'
+        }
+      ]
+    }
+  });
+
+  // Membership Duration Histogram
+  const durationData = [
+    {% for item in membership_duration %}
+      {{ item.months }},
+    {% endfor %}
+  ];
+
+  const durationLabels = [...new Set(durationData)].sort((a, b) => a - b);
+
+  const counts = durationLabels.map(label =>
+    durationData.filter(m => m === label).length
+  );
+
+  new Chart(document.getElementById('durationChart'), {
+    type: 'bar',
+    data: {
+      labels: durationLabels.map(m => `${m} mo`),
+      datasets: [{
+        label: 'Members',
+        data: counts,
+        backgroundColor: 'rgba(153, 102, 255, 0.6)'
+      }]
+    },
+    options: {
+      scales: {
+        x: {
+          title: { display: true, text: 'Months Subscribed' }
+        },
+        y: {
+          title: { display: true, text: 'Number of Members' },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

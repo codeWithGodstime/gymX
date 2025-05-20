@@ -21,20 +21,22 @@
   {% endblock %}
 </head>
 
-<body class="nav-md">
+<body class="nav-md" >
 
     <div class="container body">
         <div class="main-container row">
-            <div class="col-md-3 left_col">
+            <div class="col-md-3 left_col" style="padding-inline: 1.5rem;">
                 {% include 'partials/sidebar.html' %}
                 
             </div>
             <main class="right_col col">
             {% include 'partials/dashboard_header.html' %}
 
-                {% block content %}
-                <p>Default content...</p>
-                {% endblock content %}
+                <div class="p-4">
+                    {% block content %}
+                    <p>Default content...</p>
+                    {% endblock content %}
+                </div>
             </main>
         </div>
     </div>
