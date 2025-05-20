@@ -1,40 +1,20 @@
-# First, use an official Python slim image to build the app
-FROM python:3.12-slim-bookworm AS builder
+FROM python:alpine3.20
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+RUN apk update && apk upgrade
 
-# Set the working directory
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 WORKDIR /app
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install dependencies
 COPY requirements.txt .
-RUN pip install -r requirements.txt
 
-COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Final image
-FROM python:3.12-slim-bookworm
+COPY . /app
 
-# Set working directory
-WORKDIR /app
-
-# Copy the virtual environment and app code from the builder
-COPY --from=builder /app /app
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PATH="/app/.venv/bin:$PATH"
-
-# Expose port 8000
+# Expose the port Gunicorn will run on
 EXPOSE 8000
 
-# Run the app with gunicorn
-CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "django_project.wsgi"]
+# Start the application using Gunicorn
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "django_project.wsgi:application"]
