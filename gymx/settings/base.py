@@ -4,16 +4,13 @@ import environ
 
 env = environ.Env()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 environ.Env.read_env(BASE_DIR / '.env')
 
 SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = env("DEBUG")
-
-ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
-
-SHARED_APPS = (
+# Default/Core apps - required in all environments
+DEFAULT_APPS = (
     "django_tenants",   
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -21,23 +18,24 @@ SHARED_APPS = (
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.sites",
-    "accounts",
     "django.contrib.auth",
     "django.contrib.admin",
+)
 
+# Project-specific apps
+PROJECT_APPS = (
+    "accounts",
+    "public_app",
     "allauth",
     "allauth.account",
-
-    "public_app",
-    "crispy_forms",
-    "crispy_bootstrap5",
 )
 
 TENANT_APPS = (
     "tenant_app",
-    )
+)
 
-INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
+# Can be overridden in local.py and production.py
+INSTALLED_APPS = list(DEFAULT_APPS) + list(PROJECT_APPS) + [app for app in TENANT_APPS if app not in DEFAULT_APPS and app not in PROJECT_APPS]
 
 TENANT_MODEL = "public_app.Client"
 TENANT_DOMAIN_MODEL = "public_app.Domain"
@@ -60,9 +58,9 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 
-ROOT_URLCONF = "django_project.urls"
+ROOT_URLCONF = "gymx.urls"
 
-WSGI_APPLICATION = "django_project.wsgi.application"
+WSGI_APPLICATION = "gymx.wsgi.application"
 
 TEMPLATES = [
     {
@@ -79,22 +77,6 @@ TEMPLATES = [
         },
     },
 ]
-
-print(env("DB_POSTGRES_HOST"))
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django_tenants.postgresql_backend",
-        "NAME": env("DB_POSTGRES_DB"),
-        "USER": env("DB_POSTGRES_USER"),
-        "PASSWORD": env("DB_POSTGRES_PASSWORD"),
-        "HOST": env("DB_POSTGRES_HOST"),
-        "PORT": 5432,
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
-    }
-}
 
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
@@ -142,14 +124,6 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# django-crispy-forms
-# https://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
-
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
 DEFAULT_FROM_EMAIL = "root@localhost"

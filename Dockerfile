@@ -17,4 +17,4 @@ COPY . /app
 EXPOSE 8000
 
 # Start the application using Gunicorn
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "django_project.wsgi:application"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "gymx.wsgi:application"]
