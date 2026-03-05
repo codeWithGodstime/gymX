@@ -7,7 +7,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.views.generic import FormView
 
-from public_app.models import Client, Domain
+from apps.public_app.models import Client, Domain
 from .forms import GymOwnerSignupForm
 
 User = get_user_model()

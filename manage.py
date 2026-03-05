@@ -6,7 +6,14 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gymx.settings")
+    # Modify startapp to default to apps/ directory
+    if len(sys.argv) > 1 and sys.argv[1] == 'startapp' and '--directory' not in sys.argv:
+        idx = sys.argv.index('startapp')
+        if idx + 1 < len(sys.argv) and not sys.argv[idx + 1].startswith('-'):
+            sys.argv.insert(idx + 2, '--directory')
+            sys.argv.insert(idx + 3, 'apps')
+    
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gymx.settings.local")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

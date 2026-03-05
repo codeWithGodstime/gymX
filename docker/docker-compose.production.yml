@@ -1,0 +1,29 @@
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.production
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=gymx.settings.production
+    env_file:
+      - ../.env
+    depends_on:
+      - db
+    command: "gunicorn --bind 0.0.0.0:8000 gymx.wsgi:application"
+
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=${DB_POSTGRES_DB}
+      - POSTGRES_USER=${DB_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DB_POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

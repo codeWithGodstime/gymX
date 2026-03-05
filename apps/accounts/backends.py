@@ -22,7 +22,7 @@ class TenantAwareAuthBackend(AuthenticationBackend):
 
     def _verify_domain_access(self, user, request):
         """Verify user has access to the requested domain"""
-        from public_app.models import Domain
+        from  apps.public_app.models import Domain
         hostname = request.get_host().split(':')[0]
       
         return Domain.objects.filter(

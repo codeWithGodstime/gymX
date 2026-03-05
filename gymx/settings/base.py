@@ -7,41 +7,39 @@ env = environ.Env()
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 environ.Env.read_env(BASE_DIR / '.env')
 
-SECRET_KEY = env("SECRET_KEY")
-
 # Default/Core apps - required in all environments
-DEFAULT_APPS = (
+DEFAULT_APPS = [
     "django_tenants",   
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "django.contrib.auth",
     "django.contrib.admin",
-)
+]
 
 # Project-specific apps
-PROJECT_APPS = (
-    "accounts",
-    "public_app",
+# NOTE: public_app must come before accounts (CustomUser depends on Client)
+# NOTE: accounts must come before allauth (allauth.account.EmailAddress depends on CustomUser)
+PROJECT_APPS = [
+    "apps.public_app",
+    "apps.accounts",
     "allauth",
     "allauth.account",
-)
+]
 
-TENANT_APPS = (
-    "tenant_app",
-)
+TENANT_APPS =  [
+    "apps.tenant_app",
+]
 
-# Can be overridden in local.py and production.py
-INSTALLED_APPS = list(DEFAULT_APPS) + list(PROJECT_APPS) + [app for app in TENANT_APPS if app not in DEFAULT_APPS and app not in PROJECT_APPS]
+SHARED_APPS = DEFAULT_APPS + PROJECT_APPS
 
 TENANT_MODEL = "public_app.Client"
 TENANT_DOMAIN_MODEL = "public_app.Domain"
 
 SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
-# PUBLIC_SCHEMA_URLCONF = "public_app.urls"
+# PUBLIC_SCHEMA_URLCONF = "apps.public_app.urls"
 
 MIDDLEWARE = [
 
@@ -52,7 +50,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",  # ← Requires sessions
     
-    "accounts.middleware.CustomTenantMiddleware", 
+    "apps.accounts.middleware.CustomTenantMiddleware", 
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
@@ -125,12 +123,7 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
-DEFAULT_FROM_EMAIL = "root@localhost"
-
 INTERNAL_IPS = ["127.0.0.1"]
-
-AUTH_USER_MODEL = "accounts.CustomUser"
 
 SITE_ID = 1
 
@@ -141,7 +134,7 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 
 # https://django-allauth.readthedocs.io/en/latest/installation.html?highlight=backends
 AUTHENTICATION_BACKENDS = (
-     "accounts.backends.TenantAwareAuthBackend",
+     "apps.accounts.backends.TenantAwareAuthBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -153,7 +146,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
 ACCOUNT_FORMS = {
-    'login': 'accounts.forms.CustomLoginForm'
+    'login': 'apps.accounts.forms.CustomLoginForm'
 }
 
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS").split(",")

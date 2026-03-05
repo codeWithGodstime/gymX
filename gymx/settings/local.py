@@ -1,26 +1,33 @@
 from .base import *
 
 DEBUG = True
+SECRET_KEY = "your-local-secret-key"
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = []
 
-# Add local-specific apps
-INSTALLED_APPS += [
+INSTALLED_APPS = SHARED_APPS + TENANT_APPS + [
     "crispy_forms",
     "crispy_bootstrap5",
 ]
 
-# django-crispy-forms
-# https://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django_tenants.postgresql_backend",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "db",
+        "PORT": 5432,
     }
 }
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "mailhog"
+EMAIL_PORT =  587
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = "root@localhost"
+
+AUTH_USER_MODEL = "accounts.CustomUser"

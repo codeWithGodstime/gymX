@@ -6,7 +6,7 @@ from django_tenants.utils import get_public_schema_name
 from allauth.account.forms import SignupForm
 from django import forms
 from django_tenants.utils import tenant_context
-from public_app.models import Client, Domain
+from apps.public_app.models import Client, Domain
 
 
 class GymOwnerSignupForm(SignupForm):

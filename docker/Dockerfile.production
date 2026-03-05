@@ -1,0 +1,26 @@
+FROM python:3.12-alpine
+
+RUN apk update && apk upgrade
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /app
+
+COPY ../requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY .. /app
+
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
+# Expose the port Gunicorn will run on
+EXPOSE 8000
+
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT [ "/app/entrypoint.sh" ]
+# Start the application using Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "gymx.wsgi:application"]
