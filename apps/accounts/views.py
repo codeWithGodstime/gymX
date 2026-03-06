@@ -7,11 +7,9 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from django.views.generic import FormView, TemplateView
 from django.contrib.auth.views import LoginView, LogoutView
-from django.http import HttpResponse
-import json
 from django.db.transaction import atomic
 
-from apps.public_app.models import Gym, Domain, SubscriptionPlan, Subscription
+from apps.public_app.models import Gym, Domain, SubscriptionPlan
 from apps.public_app.paystack import PaystackSubscriptionManager
 from .forms import GymOwnerSignupForm
 
@@ -27,7 +25,7 @@ class TenantLoginView(LoginView):
 
         tenant = getattr(user, 'tenant', None)
         if tenant:
-            tenant_domain = tenant.domain_set.filter(is_primary=True).first()
+            tenant_domain = tenant.domains.filter(is_primary=True).first()
             if tenant_domain:
                 return f"http://{tenant_domain.domain}/accounts/dashboard/"
             

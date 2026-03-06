@@ -2,6 +2,8 @@ from .base import *
 
 DEBUG = False
 
+
+
 INSTALLED_APPS = SHARED_APPS + TENANT_APPS + [
     "whitenoise.runserver_nostatic"
 ]
@@ -31,3 +33,26 @@ EMAIL_PORT = env.int("EMAIL_PORT", 587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", True)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+
+
+# static files settings for production
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# https://whitenoise.readthedocs.io/en/latest/django.html
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# media files settings for production
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"

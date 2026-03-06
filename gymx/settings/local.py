@@ -3,7 +3,7 @@ from .base import *
 DEBUG = True
 SECRET_KEY = "your-local-secret-key"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [".gymx.local", "gymx.local", "localhost"]
 
 INSTALLED_APPS = SHARED_APPS + TENANT_APPS + [
     "crispy_forms",
@@ -24,8 +24,10 @@ DATABASES = {
     }
 }
 
-SESSION_COOKIE_DOMAIN = ".localhost"
-CSRF_COOKIE_DOMAIN = ".localhost"
+SESSION_COOKIE_DOMAIN = ".gymx.local"
+CSRF_COOKIE_DOMAIN = ".gymx.local"
+SESSION_COOKIE_PATH = "/"
+CSRF_COOKIE_PATH = "/"
 
 DOMAIN_HOST = "localhost:8000"
 
@@ -36,3 +38,12 @@ EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = "root@localhost"
 
 AUTH_USER_MODEL = "accounts.User"
+
+
+# development.py or your development settings
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"  # <-- THIS is required for collectstatic
+
+# media files settings for development
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"

@@ -1,18 +1,21 @@
+version: "3.9"
 
 services:
   web:
     build:
       context: ..
       dockerfile: docker/Dockerfile.production
-    ports:
-      - "8000:8000"
     environment:
       - DJANGO_SETTINGS_MODULE=gymx.settings.production
     env_file:
       - ../.env
     depends_on:
       - db
+      - minio
     command: "gunicorn --bind 0.0.0.0:8000 gymx.wsgi:application"
+    expose:
+      - "8000"
+    restart: always
 
   db:
     image: postgres:16
@@ -24,6 +27,45 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
+    restart: always
+
+  nginx:
+    image: nginx:stable
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - web
+    restart: always
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: >
+      sh -c "trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew; done"
+    depends_on:
+      - nginx
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    command: server /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"  # MinIO console
+    volumes:
+      - minio_data:/data
+    restart: always
 
 volumes:
   postgres_data:
+  minio_data:

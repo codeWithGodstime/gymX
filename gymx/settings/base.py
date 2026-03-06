@@ -101,22 +101,6 @@ USE_TZ = True
 
 LOCALE_PATHS = [BASE_DIR / "locale"]
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-STATIC_URL = "/static/"
-
-STATICFILES_DIRS = [BASE_DIR / "static"]
-
-# https://whitenoise.readthedocs.io/en/latest/django.html
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 INTERNAL_IPS = ["127.0.0.1"]

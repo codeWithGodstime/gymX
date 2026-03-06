@@ -1,2 +1,53 @@
-# Exclude the project virtual environment from image builds
-.venv
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# virtual env
+venv/
+.env/
+.venv/
+
+# git
+.git
+.gitignore
+
+# docker
+docker-compose.yml
+
+# environment files
+.env
+.env.*
+
+# editor files
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+
+# node
+node_modules/
+
+# build
+dist/
+build/
+
+# test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# static build artifacts
+staticfiles/
+
+# media (user uploads)
+media/
+
+# local db
+db.sqlite3
