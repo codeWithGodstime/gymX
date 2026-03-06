@@ -19,9 +19,6 @@ DEFAULT_APPS = [
     "django.contrib.admin",
 ]
 
-# Project-specific apps
-# NOTE: public_app must come before accounts (CustomUser depends on Client)
-# NOTE: accounts must come before allauth (allauth.account.EmailAddress depends on CustomUser)
 PROJECT_APPS = [
     "apps.public_app",
     "apps.accounts",
@@ -35,11 +32,10 @@ TENANT_APPS =  [
 
 SHARED_APPS = DEFAULT_APPS + PROJECT_APPS
 
-TENANT_MODEL = "public_app.Client"
+TENANT_MODEL = "public_app.Gym"
 TENANT_DOMAIN_MODEL = "public_app.Domain"
 
 SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
-# PUBLIC_SCHEMA_URLCONF = "apps.public_app.urls"
 
 MIDDLEWARE = [
 
@@ -152,3 +148,15 @@ ACCOUNT_FORMS = {
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS").split(",")
 
 DOMAIN_HOST = env("DOMAIN_HOST")
+
+# Paystack settings
+PAYSTACK_SECRET_KEY = env("PAYSTACK_SECRET_KEY", default="")
+
+# Message tags for Bootstrap alerts
+MESSAGE_TAGS = {
+    'debug': 'info',
+    'info': 'info',
+    'success': 'success',
+    'warning': 'warning',
+    'error': 'danger',
+}

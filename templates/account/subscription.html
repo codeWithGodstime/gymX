@@ -1,0 +1,317 @@
+{% extends '_auth_base.html' %}
+
+{% block title %}Choose Your Plan - GymX{% endblock %}
+
+{% block content %}
+<div class="subscription-wrapper">
+    <div class="subscription-container">
+        <!-- Header -->
+        <div class="subscription-header">
+            <h1 class="subscription-title">Choose Your Plan</h1>
+            <p class="subscription-subtitle">Select the perfect plan for your gym and start managing today</p>
+        </div>
+
+        <!-- Plans Grid -->
+        <div class="plans-grid">
+            {% for plan in plans %}
+            <div class="plan-card {% if forloop.counter > 1 %}plan-featured{% endif %}">
+                {% if forloop.counter > 1 %}<div class="plan-badge">RECOMMENDED</div>{% endif %}
+                
+                <div class="plan-header">
+                    <h2 class="plan-name">{{ plan.name|title }}</h2>
+                    <p class="plan-tagline">{% if plan.name|lower == 'basic' %}Perfect for small gyms{% else %}For growing gyms{% endif %}</p>
+                </div>
+
+                <div class="plan-price">
+                    <span class="currency">$</span>
+                    <span class="amount">{{ plan.amount|floatformat:0 }}</span>
+                    <span class="period">/{{ plan.get_interval_display|lower }}</span>
+                </div>
+
+                <ul class="plan-features">
+                    {% if plan.name|lower == 'basic' %}
+                        <li><i class="fas fa-check"></i> Up to 100 members</li>
+                        <li><i class="fas fa-check"></i> Attendance tracking</li>
+                        <li><i class="fas fa-check"></i> Basic membership management</li>
+                        <li><i class="fas fa-check"></i> Monthly reports</li>
+                        <li><i class="fas fa-check"></i> Email support</li>
+                        <li><i class="fas fa-check"></i> Mobile app access</li>
+                    {% else %}
+                        <li><i class="fas fa-check"></i> Unlimited members</li>
+                        <li><i class="fas fa-check"></i> Advanced attendance analytics</li>
+                        <li><i class="fas fa-check"></i> Complete membership management</li>
+                        <li><i class="fas fa-check"></i> Subscription & billing automation</li>
+                        <li><i class="fas fa-check"></i> Advanced reports & insights</li>
+                        <li><i class="fas fa-check"></i> Priority 24/7 support</li>
+                        <li><i class="fas fa-check"></i> Custom integrations</li>
+                        <li><i class="fas fa-check"></i> Staff management</li>
+                    {% endif %}
+                </ul>
+
+                <form method="post" action="{% url 'initialize_payment' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="plan" value="{{ plan.name }}">
+                    <button type="submit" class="btn-plan {% if forloop.counter > 1 %}btn-plan-premium{% endif %}">
+                        Choose {{ plan.name|title }} Plan
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Info Section -->
+        <div class="subscription-info">
+            <p class="info-text">
+                <i class="fas fa-info-circle"></i>
+                All plans include a 14-day free trial. No credit card required.
+            </p>
+            <p class="skip-text">
+                Want to explore first? <a href="/" class="skip-link">Continue to dashboard</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .subscription-wrapper {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .subscription-container {
+        width: 100%;
+        max-width: 1000px;
+    }
+
+    .subscription-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        color: #fff;
+    }
+
+    .subscription-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        letter-spacing: -0.5px;
+    }
+
+    .subscription-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        margin: 0;
+    }
+
+    .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .plan-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        border: 2px solid #e5e7eb;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .plan-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+        border-color: #6366f1;
+    }
+
+    .plan-featured {
+        border: 2px solid #6366f1;
+        box-shadow: 0 15px 50px rgba(99, 102, 241, 0.2);
+        transform: scale(1.02);
+    }
+
+    .plan-featured:hover {
+        transform: scale(1.02) translateY(-8px);
+    }
+
+    .plan-badge {
+        position: absolute;
+        top: -15px;
+        right: 30px;
+        background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+        color: #fff;
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .plan-header {
+        margin-bottom: 1.5rem;
+        padding-top: 0.5rem;
+    }
+
+    .plan-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .plan-tagline {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .plan-price {
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    .currency {
+        font-size: 1.2rem;
+        color: #6366f1;
+        font-weight: 700;
+    }
+
+    .amount {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #1f2937;
+    }
+
+    .period {
+        color: #6b7280;
+        font-size: 1rem;
+        margin-left: 0.5rem;
+    }
+
+    .plan-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2rem 0;
+    }
+
+    .plan-features li {
+        padding: 0.75rem 0;
+        color: #4b5563;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .plan-features li:last-child {
+        border-bottom: none;
+    }
+
+    .plan-features i {
+        color: #10b981;
+        font-weight: 700;
+    }
+
+    .btn-plan {
+        width: 100%;
+        padding: 1rem;
+        background: #f3f4f6;
+        color: #6366f1;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-plan:hover {
+        background: #e5e7eb;
+        border-color: #6366f1;
+    }
+
+    .btn-plan-premium {
+        background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+        color: #fff;
+        border: none;
+    }
+
+    .btn-plan-premium:hover {
+        background: linear-gradient(135deg, #4f46e5 0%, #db2777 100%);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .subscription-info {
+        text-align: center;
+        color: #fff;
+    }
+
+    .info-text {
+        font-size: 0.95rem;
+        margin: 0 0 1rem 0;
+        opacity: 0.9;
+    }
+
+    .info-text i {
+        color: #fbbf24;
+        margin-right: 0.5rem;
+    }
+
+    .skip-text {
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    .skip-link {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        border-bottom: 2px solid #fff;
+        transition: all 0.3s ease;
+    }
+
+    .skip-link:hover {
+        opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+        .plans-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .plan-featured {
+            transform: scale(1);
+        }
+
+        .plan-featured:hover {
+            transform: translateY(-8px);
+        }
+
+        .subscription-title {
+            font-size: 2rem;
+        }
+
+        .subscription-subtitle {
+            font-size: 1rem;
+        }
+
+        .amount {
+            font-size: 2rem;
+        }
+
+        .plan-card {
+            padding: 2rem;
+        }
+    }
+</style>
+{% endblock content %}

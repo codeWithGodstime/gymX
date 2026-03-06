@@ -1,8 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from apps.public_app.models import Client
+from apps.public_app.models import Gym
 
-class CustomUser(AbstractUser):
-    tenant = models.OneToOneField(Client, on_delete=models.CASCADE)
+class User(AbstractUser):
+    tenant = models.OneToOneField(Gym, on_delete=models.CASCADE)
+    
 

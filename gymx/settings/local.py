@@ -24,10 +24,12 @@ DATABASES = {
     }
 }
 
+DOMAIN_HOST = "localhost:8000"
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "mailhog"
 EMAIL_PORT =  587
 EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = "root@localhost"
 
-AUTH_USER_MODEL = "accounts.CustomUser"
+AUTH_USER_MODEL = "accounts.User"

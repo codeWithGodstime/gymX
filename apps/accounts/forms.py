@@ -1,17 +1,19 @@
 from django.contrib.auth.forms import AdminUserCreationForm, UserChangeForm
 from allauth.account.forms import LoginForm
-from .models import CustomUser
+from django.contrib.auth import get_user_model
 from django_tenants.utils import get_public_schema_name
 # forms.py
 from allauth.account.forms import SignupForm
 from django import forms
 from django_tenants.utils import tenant_context
-from apps.public_app.models import Client, Domain
+from apps.public_app.models import Gym, Domain
 
+
+CustomUser = get_user_model()
 
 class GymOwnerSignupForm(SignupForm):
     gym_name = forms.CharField(max_length=100)
-    subdomain = forms.CharField(max_length=50)
+    
 
 class CustomUserCreationForm(AdminUserCreationForm):
 

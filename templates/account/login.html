@@ -1,19 +1,46 @@
-{% extends '_base.html' %}
+{% extends '_auth_base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Log in{% endblock %}
+{% block title %}Login - GymX{% endblock %}
 
 {% block content %}
-<div class="login_wrapper">
-  <h2>Log in</h2>
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Header -->
+            <div class="auth-header">
+                <div class="auth-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h1 class="auth-title">GymX</h1>
+                <h2 class="auth-subtitle">Welcome Back</h2>
+                <p class="auth-description">Log in to your gym management dashboard</p>
+            </div>
 
-  <div class="login_content">
-    <form method="post">
-      {% csrf_token %}
-      {{ form|crispy }}
-      <button class="btn btn-success" type="submit">Log in</button>
-    </form>
-  </div>
+            <!-- Form -->
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button class="btn btn-auth" type="submit">
+                    <i class="fas fa-sign-in-alt"></i> Log In
+                </button>
+            </form>
+
+            <!-- Footer Links -->
+            <div class="auth-footer">
+                <p class="text-center mb-3">
+                    <a href="{% url 'account_reset_password' %}" class="auth-link">Forgot your password?</a>
+                </p>
+                <hr>
+                <p class="text-center">
+                    Don't have an account?<br>
+                    <a href="{% url 'account_signup' %}" class="auth-link-primary">Sign up now</a>
+                </p>
+                <p class="text-center mt-4">
+                    <a href="/" class="auth-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
-
 {% endblock content %}

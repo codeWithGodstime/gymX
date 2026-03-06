@@ -5,6 +5,7 @@ from django.contrib.auth.middleware import get_user
 from django_tenants.middleware.main import TenantMainMiddleware
 from django_tenants.utils import get_tenant_domain_model
 
+
 class CustomTenantMiddleware(TenantMainMiddleware):
     def __init__(self, get_response):
         self.get_response = get_response

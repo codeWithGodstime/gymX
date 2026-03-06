@@ -4,10 +4,14 @@ from django_tenants.utils import tenant_context
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.conf import settings
-from django.shortcuts import redirect
-from django.views.generic import FormView
+from django.shortcuts import redirect, render
+from django.views.generic import FormView, TemplateView
+from django.http import HttpResponse
+import json
+from django.db.transaction import atomic
 
-from apps.public_app.models import Client, Domain
+from apps.public_app.models import Gym, Domain, SubscriptionPlan, Subscription
+from apps.public_app.paystack import PaystackSubscriptionManager
 from .forms import GymOwnerSignupForm
 
 User = get_user_model()
@@ -16,26 +20,211 @@ User = get_user_model()
 class GymOwnerSignupView(FormView):
     form_class = GymOwnerSignupForm
     template_name = 'account/signup.html'
-    success_url = "dashboard"
 
+    @atomic
     def form_valid(self, form, *args, **kwargs):
-        tenant = Client.objects.create(
-            schema_name=form.cleaned_data['subdomain'],
-            name=form.cleaned_data['gym_name']
+        # Store user data in session for later use
+        self.request.session['signup_data'] = {
+            'gym_name': form.cleaned_data['gym_name'],
+            'email': form.cleaned_data['email'],
+            'password': form.cleaned_data['password1'],
+        }
+        
+        print(f"[VIEW] GymOwnerSignupView - Processing signup for: {form.cleaned_data['gym_name']}")
+        
+        # Create Gym tenant
+        tenant = Gym.objects.create(
+            schema_name=form.cleaned_data['gym_name'].lower().replace(' ', ''),
+            name=form.cleaned_data['gym_name'],
         )
+        
+        print(f"[VIEW] GymOwnerSignupView - Gym created - ID: {tenant.id}, Name: {tenant.name}, Schema: {tenant.schema_name}")
 
-        Domain.objects.create(
-            domain=f"{form.cleaned_data['subdomain']}.{settings.DOMAIN_HOST}",
+        # Create Domain
+        domain = Domain.objects.create(
+            domain=f"{form.cleaned_data['gym_name'].lower().replace(' ', '')}.{settings.DOMAIN_HOST}",
             tenant=tenant,
             is_primary=True
         )
+        
+        print(f"[VIEW] GymOwnerSignupView - Domain created: {domain.domain}")
 
-        User.objects.create_user(
+        # Create User
+        user = User.objects.create_user(
             email=form.cleaned_data['email'],
             password=form.cleaned_data['password1'],
-            username=form.cleaned_data['gym_name'],
+            username=form.cleaned_data['gym_name'].lower().replace(' ', ''),
             tenant=tenant
         )
-        super().form_valid(form, *args, **kwargs)
-        tenant_domain = f"{form.cleaned_data['subdomain']}.{settings.DOMAIN_HOST}"
-        return redirect(f"http://{tenant_domain}/accounts/login/")
+        
+        print(f"[VIEW] GymOwnerSignupView - User created - ID: {user.id}, Email: {user.email}")
+
+        # Store user and tenant in session
+        self.request.session['new_user_id'] = user.id
+        self.request.session['new_tenant_id'] = tenant.id
+        self.request.session.save()  # Ensure session is saved
+        
+        print(f"[VIEW] GymOwnerSignupView - Session saved - User ID: {user.id}, Tenant ID: {tenant.id}")
+        
+        # Redirect to subscription page
+        return redirect('subscription')
+
+
+class SubscriptionView(TemplateView):
+    template_name = 'account/subscription.html'
+    
+    def get(self, request, *args, **kwargs):
+        # Check if user has signed up (session data exists)
+        if 'new_user_id' not in request.session or 'new_tenant_id' not in request.session:
+            print(f"[VIEW] SubscriptionView - Session missing, redirecting to signup")
+            messages.error(request, 'Please sign up first to choose a plan.')
+            return redirect('account_signup')
+        
+        print(f"[VIEW] SubscriptionView - Displaying plans for User ID: {request.session.get('new_user_id')}, Tenant ID: {request.session.get('new_tenant_id')}")
+        
+        return super().get(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get all subscription plans from database
+        plans = SubscriptionPlan.objects.all().order_by('amount')
+        
+        print(f"[VIEW] SubscriptionView - Retrieved {plans.count()} plans")
+        for plan in plans:
+            print(f"[VIEW] SubscriptionView - Plan: {plan.name}, Amount: {plan.amount}, Code: {plan.paystack_plan_code}")
+        
+        context['plans'] = plans
+        
+        return context
+
+
+class InitializePaymentView(TemplateView):
+    """Initialize Paystack payment - handles POST from subscription page and redirects to Paystack"""
+    
+    def post(self, request, *args, **kwargs):
+        # Handle payment processing with Paystack
+        plan = request.POST.get('plan')
+        
+        print(f"[VIEW] InitializePaymentView - Selected plan: {plan}")
+        
+        # Validate plan
+        if not plan:
+            messages.error(request, 'Please select a plan.')
+            return redirect('subscription')
+        
+        # Get user and tenant from session
+        if 'new_user_id' not in request.session or 'new_tenant_id' not in request.session:
+            messages.error(request, 'Session expired. Please sign up again.')
+            return redirect('account_signup')
+        
+        try:
+            user = User.objects.get(id=request.session['new_user_id'])
+            tenant = Gym.objects.get(id=request.session['new_tenant_id'])
+            
+            print(f"[VIEW] InitializePaymentView - User: {user.email}, Tenant: {tenant.name}")
+            
+            # Get subscription plan
+            sub_plan = SubscriptionPlan.objects.get(name=plan)
+            
+            print(f"[VIEW] InitializePaymentView - Plan details - Name: {sub_plan.name}, Amount: {sub_plan.amount}, Code: {sub_plan.paystack_plan_code}")
+            
+            # Check if plan has Paystack plan code
+            if not sub_plan.paystack_plan_code:
+                messages.error(request, 'Payment plan not configured properly.')
+                print(f"[VIEW] InitializePaymentView - ERROR: Plan code not configured")
+                return redirect('subscription')
+            
+            # Initialize Paystack transaction
+            paystack_manager = PaystackSubscriptionManager()
+            email = request.session.get('signup_data', {}).get('email', user.email)
+            
+            # Create callback URL
+            callback_url = request.build_absolute_uri('/accounts/payment/callback/')
+            
+            print(f"[VIEW] InitializePaymentView - Email: {email}, Callback URL: {callback_url}")
+            
+            transaction_response = paystack_manager.initialize_subscription_transaction(
+                email=email,
+                plan_code=sub_plan.paystack_plan_code,
+                callback_url=callback_url
+            )
+            
+            print(f"[VIEW] InitializePaymentView - Transaction response status: {transaction_response.get('status')}")
+            
+            if transaction_response.get('status'):
+                # Store transaction reference in session for callback
+                request.session['paystack_reference'] = transaction_response['data']['reference']
+                request.session['payment_plan'] = plan
+                
+                print(f"[VIEW] InitializePaymentView - Redirecting to Paystack - Reference: {transaction_response['data']['reference']}")
+                
+                # Redirect to Paystack payment page
+                return redirect(transaction_response['data']['authorization_url'])
+            else:
+                messages.error(request, 'Failed to initialize payment. Please try again.')
+                print(f"[VIEW] InitializePaymentView - ERROR: Payment initialization failed - {transaction_response}")
+                return redirect('subscription')
+        
+        except SubscriptionPlan.DoesNotExist:
+            messages.error(request, 'Invalid plan selected.')
+            print(f"[VIEW] InitializePaymentView - ERROR: Plan not found - {plan}")
+            return redirect('subscription')
+        except Exception as e:
+            messages.error(request, f'Payment initialization failed: {str(e)}')
+            print(f"[VIEW] InitializePaymentView - EXCEPTION: {str(e)}")
+            return redirect('subscription')
+
+
+class PaymentCallbackView(TemplateView):
+    """Handle Paystack callback after payment"""
+    
+    def get(self, request, *args, **kwargs):
+        reference = request.GET.get('reference')
+        
+        print(f"[VIEW] PaymentCallbackView - Callback received with reference: {reference}")
+        
+        if not reference:
+            messages.error(request, 'Invalid payment reference.')
+            print(f"[VIEW] PaymentCallbackView - ERROR: No reference provided")
+            return redirect('account_signup')
+        
+        # Get data from session
+        if 'new_user_id' not in request.session or 'new_tenant_id' not in request.session:
+            messages.error(request, 'Session expired. Please sign up again.')
+            print(f"[VIEW] PaymentCallbackView - ERROR: Session data missing")
+            return redirect('account_signup')
+        
+        try:
+            user = User.objects.get(id=request.session['new_user_id'])
+            tenant = Gym.objects.get(id=request.session['new_tenant_id'])
+            
+            print(f"[VIEW] PaymentCallbackView - User: {user.email}, Tenant: {tenant.name}")
+            
+            # Verify payment with Paystack
+            paystack_manager = PaystackSubscriptionManager()
+            subscription = paystack_manager.handle_payment_success(reference, tenant)
+            
+            print(f"[VIEW] PaymentCallbackView - Payment handler result: {subscription}")
+            
+            if subscription:
+                # Clean up session
+                session_keys = ['signup_data', 'new_user_id', 'new_tenant_id', 'paystack_reference', 'payment_plan']
+                for key in session_keys:
+                    if key in request.session:
+                        del request.session[key]
+                
+                # Redirect to tenant dashboard
+                tenant_domain = f"{tenant.schema_name}.{settings.DOMAIN_HOST}"
+                print(f"[VIEW] PaymentCallbackView - SUCCESS: Subscription created, redirecting to {tenant_domain}")
+                messages.success(request, f'Welcome to GymX! Your {subscription.plan.name} plan is now active.')
+                return redirect(f"http://{tenant_domain}/accounts/dashboard/")
+            else:
+                messages.error(request, 'Payment verification failed. Please contact support.')
+                print(f"[VIEW] PaymentCallbackView - ERROR: Payment handler returned False")
+                return redirect('account_signup')
+                
+        except Exception as e:
+            messages.error(request, f'Payment processing failed: {str(e)}')
+            print(f"[VIEW] PaymentCallbackView - EXCEPTION: {str(e)}")
+            return redirect('account_signup')
