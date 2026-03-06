@@ -24,6 +24,9 @@ DATABASES = {
     }
 }
 
+SESSION_COOKIE_DOMAIN = ".localhost"
+CSRF_COOKIE_DOMAIN = ".localhost"
+
 DOMAIN_HOST = "localhost:8000"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
