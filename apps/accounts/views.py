@@ -1,11 +1,12 @@
 from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django_tenants.utils import tenant_context
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.views.generic import FormView, TemplateView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse
 import json
 from django.db.transaction import atomic
@@ -16,6 +17,25 @@ from .forms import GymOwnerSignupForm
 
 User = get_user_model()
 
+
+class TenantLoginView(LoginView):
+    template_name = 'account/login.html'
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+        user = self.request.user
+
+        tenant = getattr(user, 'tenant', None)
+        if tenant:
+            tenant_domain = tenant.domain_set.filter(is_primary=True).first()
+            if tenant_domain:
+                return f"http://{tenant_domain.domain}/accounts/dashboard/"
+            
+        return reverse('accounts:login')
+    
+
+class TenantLogoutView(LogoutView):
+    next_page = reverse_lazy('accounts:login')
 
 class GymOwnerSignupView(FormView):
     form_class = GymOwnerSignupForm
