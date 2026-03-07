@@ -19,7 +19,7 @@ logs-local:
 	docker compose -f docker/docker-compose.local.yml logs -f
 
 migrate-local:
-	docker compose -f docker/docker-compose.local.yml exec web python manage.py migrate
+	docker compose -f docker/docker-compose.local.yml exec web python manage.py migrate_schemas
 
 collectstatic-local:
 	docker compose -f docker/docker-compose.local.yml exec web python manage.py collectstatic --noinput

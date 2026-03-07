@@ -4,11 +4,13 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from datetime import date, timedelta
 from django.views.generic import TemplateView, ListView, FormView, View
+from django_tenants.utils import tenant_context
 from django.db.models import OuterRef, Subquery
 from django.db.models import F, ExpressionWrapper, IntegerField, Value, Count, Sum, Avg, DurationField, Min, Max
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .service import GymService, ActivityService
 
 from .forms import MemberCreationForm
 from .models import Members, MemberPayment
@@ -56,6 +58,15 @@ def dashboard_analytics(request):
         context
     )
 
+def dashboard_recent_activity(request):
+    tenant = request.user.tenant  # current tenant instance
+    with tenant_context(tenant):
+        activities = ActivityService.get_recent_activities(limit=5)
+    return render(
+        request,
+        "partials/dashboard_recent_activity.html",
+        {"activities": activities}
+    )
 class MemberList(LoginRequiredMixin, ListView):
     model = Members
     template_name = 'dashboard/members_list.html'
