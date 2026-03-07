@@ -1,46 +1,101 @@
-{% extends '_auth_base.html' %}
+{% extends '_base.html' %}
 {% load crispy_forms_tags %}
+{% load i18n static %}
 
 {% block title %}Login - GymX{% endblock %}
 
 {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-container">
-        <div class="auth-card">
-            <!-- Header -->
-            <div class="auth-header">
-                <div class="auth-icon">
-                    <i class="fas fa-dumbbell"></i>
+<div class="max-w-md mx-auto mt-12 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white dark:bg-slate-900 shadow-xl rounded-2xl p-8 border border-slate-200 dark:border-slate-700">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white text-center mb-8">
+            Welcome Back
+        </h2>
+
+        <form method="post" action="{% url 'account_login' %}" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Non-field errors -->
+            {% if form.non_field_errors %}
+            <div
+                class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <!-- Email / Login field -->
+            <div>
+                <label class="block text-slate-700 dark:text-slate-300 text-sm font-semibold mb-2"
+                    for="{{ form.login.id_for_label }}">
+                    {{ form.login.label }}
+                </label>
+                {{ form.login }}
+                {% if form.login.errors %}
+                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.login.errors|join:" " }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Password field with visibility toggle -->
+            <div>
+                <label class="block text-slate-700 dark:text-slate-300 text-sm font-semibold mb-2"
+                    for="{{ form.password.id_for_label }}">
+                    {{ form.password.label }}
+                </label>
+                <div class="relative">
+                    {{ form.password }}
+                    <button type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                        onclick="togglePasswordVisibility()">
+                        <span class="material-symbols-outlined text-xl" id="visibility-icon">visibility</span>
+                    </button>
                 </div>
-                <h1 class="auth-title">GymX</h1>
-                <h2 class="auth-subtitle">Welcome Back</h2>
-                <p class="auth-description">Log in to your gym management dashboard</p>
+                {% if form.password.errors %}
+                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.password.errors|join:" " }}</p>
+                {% endif %}
             </div>
 
-            <!-- Form -->
-            <form method="post" class="auth-form">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button class="btn btn-auth" type="submit">
-                    <i class="fas fa-sign-in-alt"></i> Log In
-                </button>
-            </form>
-
-            <!-- Footer Links -->
-            <div class="auth-footer">
-                <p class="text-center mb-3">
-                    <a href="{% url 'account_reset_password' %}" class="auth-link">Forgot your password?</a>
-                </p>
-                <hr>
-                <p class="text-center">
-                    Don't have an account?<br>
-                    <a href="{% url 'account_signup' %}" class="auth-link-primary">Sign up now</a>
-                </p>
-                <p class="text-center mt-4">
-                    <a href="/" class="auth-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
-                </p>
+            <!-- Remember me + Forgot password -->
+            <div class="flex items-center justify-between">
+                <label class="flex items-center gap-2 cursor-pointer group">
+                    {{ form.remember }}
+                    <span
+                        class="text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors">
+                        Remember Me
+                    </span>
+                </label>
+                <a href="{% url 'account_reset_password' %}"
+                    class="text-sm font-semibold text-primary hover:opacity-80 transition-opacity">
+                    Forgot Password?
+                </a>
             </div>
-        </div>
+
+            <!-- Submit button -->
+            <button type="submit"
+                class="w-full h-12 bg-primary text-white font-bold rounded-lg shadow-sm hover:opacity-90 active:scale-[0.98] transition-all">
+                Log In
+            </button>
+
+            <!-- Optional: Sign up link -->
+            <p class="text-center text-sm text-slate-600 dark:text-slate-400 mt-6">
+                Don't have an account?
+                <a href="{% url 'account_signup' %}" class="text-primary font-semibold hover:underline">Sign up</a>
+            </p>
+        </form>
     </div>
 </div>
-{% endblock content %}
+
+<!-- JavaScript for password visibility toggle -->
+<script>
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('{{ form.password.id_for_label }}');
+        const icon = document.getElementById('visibility-icon');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.textContent = 'visibility_off';
+        } else {
+            passwordInput.type = 'password';
+            icon.textContent = 'visibility';
+        }
+    }
+</script>
+{% endblock %}

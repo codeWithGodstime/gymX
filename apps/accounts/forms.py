@@ -144,10 +144,43 @@ class CustomUserChangeForm(UserChangeForm):
             "username",
         )
 
-class CustomLoginForm(LoginForm):
-    def __init__(self, *args, **kwargs):
-        super(CustomLoginForm, self).__init__(*args, **kwargs)
-        self.fields['login'].widget.attrs.update({'class': 'form-control'})
-        self.fields['password'].widget.attrs.update({'class': 'form-control'})
 
-        self.label_classes = 'form-label'
+class CustomLoginForm(LoginForm):
+    remember = forms.BooleanField(
+        label="Remember Me",
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            'class': (
+                "h-5 w-5 rounded border-slate-300 dark:border-slate-600 "
+                "bg-transparent text-primary checked:bg-primary checked:border-primary "
+                "focus:ring-primary focus:ring-offset-0 transition-all cursor-pointer"
+            )
+        })
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Common input classes (DRY)
+        input_classes = (
+            "w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-700 "
+            "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 "
+            "placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 "
+            "focus:border-primary transition-all"
+        )
+
+        # Apply styling to login (which is email or username depending on settings)
+        self.fields['login'].widget.attrs.update({
+            'class': input_classes,
+            'placeholder': 'name@company.com' if self.fields['login'].label == 'Email' else 'Username or Email',
+        })
+
+        # Password field
+        self.fields['password'].widget.attrs.update({
+            'class': input_classes,
+            'placeholder': 'Enter your password',
+        })
+
+        # Optional: Add autocomplete attributes (good for password managers)
+        self.fields['login'].widget.attrs['autocomplete'] = 'email' if self.fields['login'].label == 'Email' else 'username'
+        self.fields['password'].widget.attrs['autocomplete'] = 'current-password'
