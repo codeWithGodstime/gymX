@@ -19,72 +19,42 @@ class GymDashboardOveriew(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        now = timezone.now()
-        today = now.today
-        members = Members.objects.all()
-        total_members_count = members.count()
-        members_payment_expiration = MemberPayment.objects.filter(
-                    expiration_date__year=now.year,
-                    expiration_date__month=now.month
-                )
-
-        upcoming_renewals = members_payment_expiration.count()
-        expiring_members = members_payment_expiration.select_related('member')
-
-        for payment in expiring_members:
-            payment.days_left = (payment.expiration_date - now).days
-
-        total_revenue = MemberPayment.objects.aggregate(total=Sum('amount'))['total'] or 0
-        active_subscriptions = MemberPayment.objects.filter(
-            expiration_date__gte=now.date()
-        ).count()
-
-        latest_payment = MemberPayment.objects.filter(
-            member=OuterRef('pk')
-        ).order_by('-expiration_date')
-
-        new_members = Members.objects.annotate(
-            latest_expiration=Subquery(latest_payment.values('expiration_date')[:1])
-        ).order_by('-created_at')[:5]
-
-        monthly_revenue = (
-            MemberPayment.objects
-            .annotate(month=TruncMonth('date_of_payment'))
-            .values('month')
-            .annotate(month_total=Sum('amount'))
-        )
-        print(monthly_revenue, "Monthly_Revenue")
-
-        # Calculate average
-        if monthly_revenue:
-            total_months = len(monthly_revenue)
-            sum_months = sum(m['month_total'] for m in monthly_revenue)
-            average_monthly_revenue = sum_months / total_months
-        else:
-            average_monthly_revenue = 0
         
-        print(average_monthly_revenue, "Average")
-        total_new_members = members.filter(
-            created_at__year=now.year,
-            created_at__month=now.month
-        ).count()
-
-        context.update({
-            "members": {
-                'total_members_count': total_members_count,
-                'total_new_members': total_new_members,
-                "upcoming_renewals": upcoming_renewals,
-                "new_members": new_members,
-                "expiring_members": expiring_members
-            },
-            "subscriptions": {
-                "average_monthly_revenue": average_monthly_revenue,
-                "active_subscriptions": active_subscriptions,
-                "total_revenue": total_revenue
-            }
-
-        })
         return context
+    
+def dashboard_analytics(request):
+
+    filter_type = request.GET.get("filter", "month")
+
+    if filter_type == "today":
+        members = 45
+        revenue = 120000
+        attendance = 68
+
+    elif filter_type == "month":
+        members = 1248
+        revenue = 3420000
+        attendance = 72
+
+    else:
+        members = 8400
+        revenue = 22000000
+        attendance = 70
+
+    context = {
+        "members": members,
+        "revenue": revenue,
+        "attendance": attendance,
+        "members_growth": 12,
+        "revenue_growth": 8,
+        "attendance_growth": 12,
+    }
+
+    return render(
+        request,
+        "partials/dashboard_key_metrics.html",
+        context
+    )
 
 class MemberList(LoginRequiredMixin, ListView):
     model = Members
