@@ -1,0 +1,35 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+    {% for plan in plans %}
+    <div
+        class="relative flex flex-col gap-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 hover:border-primary/50 transition-all group">
+        
+        {% if plan.interval == 'yearly' %}
+        <div class="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
+            20% OFF
+        </div>
+        {% endif %}
+
+        <div class="flex flex-col gap-2">
+            <h3 class="text-slate-900 dark:text-white text-xl font-bold">{{ plan.name|title }}</h3>
+            <p class="text-slate-500 text-sm">{{ plan.description }}</p>
+            <div class="flex items-baseline gap-1 mt-4">
+                <span class="text-slate-900 dark:text-white text-5xl font-black tracking-tighter">₦{{ plan.amount }}</span>
+                <span class="text-slate-500 text-sm font-medium">/{{ plan.interval }}</span>
+            </div>
+        </div>
+        <a href="{% url 'accounts_signup' %}?plan={{ plan.id }}"
+           class="w-full flex items-center justify-center gap-2 rounded-xl h-12 px-6 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+            <span class="material-symbols-outlined text-lg">credit_card</span>
+            <span>Choose Plan</span>
+        </a>
+        <ul class="flex flex-col gap-4">
+            {% for feature in plan.features.all %}
+            <li class="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                <span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+                {{ feature.name }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+</div>
