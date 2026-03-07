@@ -1,124 +1,261 @@
 {% extends "./base.html" %}
-{% load static %}
 
+{% block title %}Dashboard - GymX{% endblock %}
 
 {% block content %}
 
-<!-- summary -->
-<div class="row mb-5">
-    <div class="col">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">Membership Stats</h5>
-            </div>
-            <div class="card-body">
 
-                <ul class="list-group list-group-flush mb-3">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Total Members
-                        <span class="badge bg-primary rounded-pill">{{members.total_members_count}}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        New Members This Month
-                        <span class="badge bg-success rounded-pill">{{members.total_new_members}}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Upcoming Renewals (Next 30 Days)
-                        <span class="badge bg-warning text-dark rounded-pill">{{members.upcoming_renewals}}</span>
-                    </li>
-                </ul>
-                <a href="/members" class="btn btn-outline-primary w-100">View All Members</a>
+{% include "partials/dashboard_header.html" %}
+
+<div class="flex flex-1">
+    {% include "partials/dashboard_aside.html" %}
+    <main class="flex-1 p-6">
+        <!-- Dashboard Header -->
+        <div class="flex justify-between items-end">
+            <div class="flex flex-col gap-2">
+                <h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">Dashboard Overview
+                </h2>
+                <p class="text-slate-500">Performance insights for <span
+                        class="font-semibold text-slate-700 dark:text-slate-300">September 2023</span></p>
+            </div>
+            <div class="flex gap-2">
+                <button
+                    class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">calendar_today</span>
+                    Today
+                </button>
+                <button
+                    class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">download</span>
+                    Export Report
+                </button>
             </div>
         </div>
-    </div>
 
-    <div class="col">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">Subscription Stats</h5>
+        <!-- Key Metrics Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-5">
+            <div
+                class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Active Members</p>
+                        <p class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-1">1,248</p>
+                    </div>
+                    <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                        <span class="material-symbols-outlined">group</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-emerald-500 text-sm font-bold flex items-center">
+                        <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                        +12%
+                    </span>
+                    <span class="text-slate-400 text-xs font-medium">vs last month</span>
+                </div>
+                <div class="h-10 w-full mt-2">
+                    <svg class="w-full h-full stroke-primary fill-none stroke-2" viewbox="0 0 400 50">
+                        <path d="M0 45 Q 50 10, 100 35 T 200 15 T 300 40 T 400 20" stroke-linecap="round"></path>
+                    </svg>
+                </div>
             </div>
-            <div class="card-body">
-                
-                <ul class="list-group list-group-flush mb-3">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Active Subscriptions
-                        <span class="badge bg-primary rounded-pill">{{subscriptions.active_subscriptions}}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Average Monthly Revenue
-                        <span class="badge bg-success rounded-pill">${{subscriptions.average_monthly_revenue}}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Total Revenue
-                        <span class="badge bg-dark rounded-pill">${{subscriptions.total_revenue}}</span>
-                    </li>
-                </ul>
-                <a href="/subscriptions" class="btn btn-outline-primary w-100">View Subscriptions</a>
+            <div
+                class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Monthly Revenue</p>
+                        <p class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-1">$42,500</p>
+                    </div>
+                    <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-600">
+                        <span class="material-symbols-outlined">payments</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-emerald-500 text-sm font-bold flex items-center">
+                        <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                        +5%
+                    </span>
+                    <span class="text-slate-400 text-xs font-medium">vs last month</span>
+                </div>
+                <div class="h-10 w-full mt-2">
+                    <svg class="w-full h-full stroke-emerald-500 fill-none stroke-2" viewbox="0 0 400 50">
+                        <path d="M0 30 Q 80 40, 160 20 T 320 15 T 400 10" stroke-linecap="round"></path>
+                    </svg>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Attendance Rate</p>
+                        <p class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-1">78%</p>
+                    </div>
+                    <div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-600">
+                        <span class="material-symbols-outlined">how_to_reg</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-rose-500 text-sm font-bold flex items-center">
+                        <span class="material-symbols-outlined text-sm mr-1">trending_down</span>
+                        -2%
+                    </span>
+                    <span class="text-slate-400 text-xs font-medium">vs last month</span>
+                </div>
+                <div class="h-10 w-full mt-2">
+                    <svg class="w-full h-full stroke-amber-500 fill-none stroke-2" viewbox="0 0 400 50">
+                        <path d="M0 15 Q 100 50, 200 25 T 300 45 T 400 40" stroke-linecap="round"></path>
+                    </svg>
+                </div>
             </div>
         </div>
-    </div>
+
+        <!-- Additional dashboard content (charts, tables, etc.) can go here -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-5">
+            <!-- Activity Feed -->
+            <div
+                class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Recent Activity</h3>
+                    <a class="text-primary text-sm font-semibold hover:underline" href="#">View All</a>
+                </div>
+                <div class="p-0">
+                    <div class="flex flex-col">
+                        <!-- Activity Item -->
+                        <div
+                            class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                            <div
+                                class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                <span class="material-symbols-outlined">person_add</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Marcus Sterling
+                                    <span class="font-normal text-slate-500">joined the gym</span></p>
+                                <p class="text-xs text-slate-400">Premium Membership • 2 minutes ago</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-bold text-slate-900 dark:text-slate-100">+$89.00</p>
+                                <span
+                                    class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-bold">PAID</span>
+                            </div>
+                        </div>
+                        <!-- Activity Item -->
+                        <div
+                            class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                            <div
+                                class="size-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
+                                <span class="material-symbols-outlined">payments</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Sarah Jenkins <span
+                                        class="font-normal text-slate-500">renewed subscription</span></p>
+                                <p class="text-xs text-slate-400">Basic Plan • 45 minutes ago</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-bold text-slate-900 dark:text-slate-100">+$49.00</p>
+                                <span
+                                    class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-bold">PAID</span>
+                            </div>
+                        </div>
+                        <!-- Activity Item -->
+                        <div
+                            class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                            <div
+                                class="size-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600">
+                                <span class="material-symbols-outlined">warning</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">David Cooper <span
+                                        class="font-normal text-slate-500">payment failed</span></p>
+                                <p class="text-xs text-slate-400">Elite Plan • 2 hours ago</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-bold text-rose-500">$120.00</p>
+                                <span
+                                    class="text-[10px] px-2 py-0.5 bg-rose-100 text-rose-700 rounded-full font-bold">REJECTED</span>
+                            </div>
+                        </div>
+                        <!-- Activity Item -->
+                        <div
+                            class="p-4 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                            <div
+                                class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                <span class="material-symbols-outlined">person_add</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Elena Rodriguez
+                                    <span class="font-normal text-slate-500">joined the gym</span></p>
+                                <p class="text-xs text-slate-400">Premium Membership • 5 hours ago</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-bold text-slate-900 dark:text-slate-100">+$89.00</p>
+                                <span
+                                    class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-bold">PAID</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Side Column: Attendance Peak -->
+            <div
+                class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col gap-6">
+                <h3 class="font-bold text-lg">Daily Peak Hours</h3>
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                            <span>Morning (6am - 10am)</span>
+                            <span>85% Capacity</span>
+                        </div>
+                        <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div class="bg-primary h-full w-[85%]"></div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                            <span>Lunch (11am - 2pm)</span>
+                            <span>40% Capacity</span>
+                        </div>
+                        <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div class="bg-primary h-full w-[40%]"></div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                            <span>Evening (5pm - 9pm)</span>
+                            <span>95% Capacity</span>
+                        </div>
+                        <div class="h-2 bg-rose-400 h-full rounded-full overflow-hidden">
+                            <div class="bg-rose-500 h-full w-[95%]"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    <h4 class="text-sm font-bold mb-4">Device Status</h4>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <div class="size-2 bg-emerald-500 rounded-full"></div>
+                                <span class="text-sm font-medium">Main Entrance Gate</span>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-500">ONLINE</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <div class="size-2 bg-emerald-500 rounded-full"></div>
+                                <span class="text-sm font-medium">Locker Room RFID</span>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-500">ONLINE</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <div class="size-2 bg-rose-500 rounded-full"></div>
+                                <span class="text-sm font-medium">Cardio Zone Display</span>
+                            </div>
+                            <span class="text-xs font-bold text-rose-500">OFFLINE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 </div>
-
-<div class="row">
-    <div class="col">
-        <div class="card">
-            <h5 class="card-header">Upcoming Renewals</h5>
-            <div class="x_content">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Expiration Date</th>
-                            <th>Days left</th>
-                        </tr>
-                    </thead>
-                    {% if members.expiring_members %}
-                    <tbody>
-                        {% for payment in members.expiring_members %}
-                          <tr>
-                            <td>{{ payment.member.name }}</td>
-                            <td>{{ payment.expiration_date }}</td>
-                            <td>{{ payment.days_left }} days left</td>
-                          </tr>
-                        {% endfor %}
-                      </tbody>
-                    {% else %}
-                    <!-- <p>You don't have any expiring members currently</p> -->
-                    {% endif %}
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="col">
-        <div class="card">
-            <h5 class="card-header">New Members</h5>
-            <div class="x_content">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <!-- <th>#</th> -->
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Expiration Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for member in members.new_members %}
-                        <tr>
-                            <tr>
-                                <td>{{ member.name }}</td>
-                                <td>{{ member.type }}</td>
-                                <td>{{ member.latest_expiration }}</td>
-                              </tr>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
-    </div>
+</main>
 </div>
-
 {% endblock %}

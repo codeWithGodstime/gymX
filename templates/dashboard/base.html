@@ -1,46 +1,9 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
+{% extends "_base.html" %}
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <title>{% block title %}Dashboard{% endblock title %}</title>
-  <meta name="author" content="">
 
-  {% block css %}
-  <!-- font awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+{% block title %}Dashboard - GymX{% endblock %}
 
-  <link rel="stylesheet" href="{% static 'css/custom.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  {% endblock %}
-</head>
+{% block content %}
+<h1>Hello base</h1>
 
-<body class="nav-md" >
-
-    <div class="container body">
-        <div class="main-container row">
-            <div class="col-md-3 left_col" style="padding-inline: 1.5rem;">
-                {% include 'partials/sidebar.html' %}
-                
-            </div>
-            <main class="right_col col">
-            {% include 'partials/dashboard_header.html' %}
-
-                <div class="p-4">
-                    {% block content %}
-                    <p>Default content...</p>
-                    {% endblock content %}
-                </div>
-            </main>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
-</body>
-
-</html>
+{% endblock %}
