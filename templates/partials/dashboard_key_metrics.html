@@ -1,65 +1,72 @@
+{% load formatters %}
+
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-5">
-            <div
-                class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Active Members</p>
-                        <p class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-1"></p>
-                    </div>
-                    <div class="p-2 bg-primary/10 rounded-lg text-primary">
-                        <span class="material-symbols-outlined">group</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-emerald-500 text-sm font-bold flex items-center">
-                        <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
-                        +12%
-                    </span>
-                    <span class="text-slate-400 text-xs font-medium">vs last month</span>
-                </div>
+    <!-- Active Members -->
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Active Members</p>
+                <p class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-1">{{ members }}</p>
             </div>
-            <div
-                class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Monthly Revenue</p>
-                        <p class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-1">$42,500</p>
-                    </div>
-                    <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-600">
-                        <span class="material-symbols-outlined">payments</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-emerald-500 text-sm font-bold flex items-center">
-                        <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
-                        +5%
-                    </span>
-                    <span class="text-slate-400 text-xs font-medium">vs last month</span>
-                </div>
-               
-            </div>
-            <div
-                class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Attendance Rate</p>
-                        <p class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-1">78%</p>
-                    </div>
-                    <div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-600">
-                        <span class="material-symbols-outlined">how_to_reg</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-rose-500 text-sm font-bold flex items-center">
-                        <span class="material-symbols-outlined text-sm mr-1">trending_down</span>
-                        -2%
-                    </span>
-                    <span class="text-slate-400 text-xs font-medium">vs last month</span>
-                </div>
-                
+            <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                <span class="material-symbols-outlined">group</span>
             </div>
         </div>
+        <div class="flex items-center gap-2">
+            <span class="{% if members_growth >= 0 %}text-emerald-500{% else %}text-rose-500{% endif %} text-sm font-bold flex items-center">
+                <span class="material-symbols-outlined text-sm mr-1">
+                    {% if members_growth >= 0 %}trending_up{% else %}trending_down{% endif %}
+                </span>
+                {{ members_growth|percentage }}
+            </span>
+            <span class="text-slate-400 text-xs font-medium">vs last period</span>
+        </div>
+    </div>
 
+    <!-- Monthly Revenue -->
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Revenue</p>
+                <p class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-1">{{ revenue|naira }}</p>
+            </div>
+            <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-600">
+                <span class="material-symbols-outlined">payments</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="{% if revenue_growth >= 0 %}text-emerald-500{% else %}text-rose-500{% endif %} text-sm font-bold flex items-center">
+                <span class="material-symbols-outlined text-sm mr-1">
+                    {% if revenue_growth >= 0 %}trending_up{% else %}trending_down{% endif %}
+                </span>
+                {{ revenue_growth|percentage }}
+            </span>
+            <span class="text-slate-400 text-xs font-medium">vs last period</span>
+        </div>
+    </div>
+
+    <!-- Attendance Rate -->
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Attendance Rate</p>
+                <p class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-1">{{ attendance|percentage }}</p>
+            </div>
+            <div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-600">
+                <span class="material-symbols-outlined">how_to_reg</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="{% if attendance_growth >= 0 %}text-emerald-500{% else %}text-rose-500{% endif %} text-sm font-bold flex items-center">
+                <span class="material-symbols-outlined text-sm mr-1">
+                    {% if attendance_growth >= 0 %}trending_up{% else %}trending_down{% endif %}
+                </span>
+                {{ attendance_growth|percentage }}
+            </span>
+            <span class="text-slate-400 text-xs font-medium">vs last period</span>
+        </div>
+    </div>
+</div>
 
 <div id="loading" class="htmx-indicator">
     Loading analytics...

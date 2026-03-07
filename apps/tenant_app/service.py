@@ -1,17 +1,55 @@
-from .models import Activity, MemberPayment, Members
+from .models import Activity, MemberPayment, Members, Attendance
+from django.db.models import Sum, Count
+from datetime import date
 
-class GymService:
+
+class DashboardMetricsService:
     @staticmethod
-    def get_dashboard_overview_data(gym):
-        # Placeholder for actual data retrieval logic
+    def get_active_members_count(start_date=None, end_date=None):
+        """
+        Count members whose payment is currently active (not expired) within optional date range.
+        """
+        qs = Members.objects.filter(
+            member_payments__expiration_date__gte=date.today()
+        ).distinct()
+
+        if start_date:
+            qs = qs.filter(member_payments__date_of_payment__gte=start_date)
+        if end_date:
+            qs = qs.filter(member_payments__date_of_payment__lte=end_date)
+        
+        return qs.count()
+
+    @staticmethod
+    def get_monthly_revenue(start_date=None, end_date=None):
+        """
+        Sum of payments within optional date range
+        """
+        qs = MemberPayment.objects.all()
+        if start_date:
+            qs = qs.filter(date_of_payment__gte=start_date)
+        if end_date:
+            qs = qs.filter(date_of_payment__lte=end_date)
+        
+        revenue = qs.aggregate(total=Sum("amount"))["total"] or 0
+        return revenue
+
+    @staticmethod
+    def get_attendance_rate(start_date=None, end_date=None):
+        """
+        Placeholder: Returns 0 if you don't yet track attendance.
+        Replace with real Attendance model if available.
+        """
+        # If you have an Attendance model, filter by start_date/end_date
+        return 0
+
+    @classmethod
+    def get_dashboard_metrics(cls, start_date=None, end_date=None):
         return {
-            "total_members": 150,
-            "active_members": 120,
-            "monthly_revenue": 5000,
-            "current_month": "September",
-            "current_year": 2023,
-        }
-    
+            "active_members": cls.get_active_members_count(start_date, end_date),
+            "monthly_revenue": cls.get_monthly_revenue(start_date, end_date),
+            "attendance_rate": cls.get_attendance_rate(start_date, end_date),
+        }    
 
 class ActivityService:
     """

@@ -10,10 +10,11 @@ from django.db.models import F, ExpressionWrapper, IntegerField, Value, Count, S
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .service import GymService, ActivityService
+from .service import DashboardMetricsService, ActivityService
 
 from .forms import MemberCreationForm
 from .models import Members, MemberPayment
+
 
 
 class GymDashboardOveriew(LoginRequiredMixin, TemplateView):
@@ -25,31 +26,60 @@ class GymDashboardOveriew(LoginRequiredMixin, TemplateView):
         return context
     
 def dashboard_analytics(request):
-
     filter_type = request.GET.get("filter", "month")
+    today = date.today()
 
+    # Determine start and end dates based on filter
     if filter_type == "today":
-        members = 45
-        revenue = 120000
-        attendance = 68
-
+        start_date = end_date = today
     elif filter_type == "month":
-        members = 1248
-        revenue = 3420000
-        attendance = 72
-
+        start_date = today.replace(day=1)
+        end_date = today
+    elif filter_type == "year":
+        start_date = today.replace(month=1, day=1)
+        end_date = today
     else:
-        members = 8400
-        revenue = 22000000
-        attendance = 70
+        start_date = end_date = None  # fallback: all time
 
+    # Get metrics dynamically
+    metrics = DashboardMetricsService.get_dashboard_metrics(start_date, end_date)
+
+    # Optional: calculate growth vs previous period
+    def calculate_growth(metric_fn, start, end, period_delta):
+        prev_start = start - period_delta
+        prev_end = end - period_delta
+        current = metric_fn(start, end)
+        previous = metric_fn(prev_start, prev_end)
+        if previous == 0:
+            return 0
+        return round(((current - previous) / previous) * 100, 1)
+
+    from datetime import timedelta
+
+    members_growth = calculate_growth(
+        DashboardMetricsService.get_active_members_count,
+        start_date, end_date,
+        timedelta(days=(end_date - start_date).days + 1)
+    )
+    revenue_growth = calculate_growth(
+        DashboardMetricsService.get_monthly_revenue,
+        start_date, end_date,
+        timedelta(days=(end_date - start_date).days + 1)
+    )
+    attendance_growth = calculate_growth(
+        DashboardMetricsService.get_attendance_rate,
+        start_date, end_date,
+        timedelta(days=(end_date - start_date).days + 1)
+    )
+
+    print("Metrics:", metrics)
     context = {
-        "members": members,
-        "revenue": revenue,
-        "attendance": attendance,
-        "members_growth": 12,
-        "revenue_growth": 8,
-        "attendance_growth": 12,
+        "members": metrics["active_members"],  # e.g., 1248
+        "revenue": metrics["monthly_revenue"], # e.g., 3420000
+        "attendance": metrics["attendance_rate"], # e.g., 0.72 for 72%
+        "members_growth": members_growth / 100,       # 0.12 for 12%
+        "revenue_growth": revenue_growth / 100,       # 0.08 for 8%
+        "attendance_growth": attendance_growth / 100 # -0.02 for -2%
     }
 
     return render(

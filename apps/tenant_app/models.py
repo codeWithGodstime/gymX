@@ -67,3 +67,7 @@ class MemberPayment(models.Model):
     expiration_date = models.DateField()
     member = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='member_payments')
     is_renewal = models.BooleanField(default=False)
+
+
+class Attendance(models.Model):
+    pass
