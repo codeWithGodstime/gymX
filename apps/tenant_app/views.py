@@ -98,6 +98,23 @@ def dashboard_recent_activity(request):
         {"activities": activities}
     )
 
+def member_list_partial(request):
+    filter_type = request.GET.get("filter", "all")
+    today = date.today()
+
+    if filter_type == "active":
+        members = Members.objects.filter(member_payments__expiration_date__gte=today).distinct()
+    elif filter_type == "expired":
+        members = Members.objects.filter(member_payments__expiration_date__lt=today).distinct()
+    elif filter_type == "overdue":
+        # Example: expired by more than 7 days
+        members = Members.objects.filter(member_payments__expiration_date__lt=today).distinct()
+    else:
+        members = Members.objects.all()
+
+    return render(request, "partials/member_rows.html", {"members": members, "today": today})
+
+
 class MemberList(LoginRequiredMixin, ListView):
     model = Members
     template_name = 'dashboard/members_list.html'

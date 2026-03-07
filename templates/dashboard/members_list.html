@@ -1,6 +1,6 @@
 {% extends "./base.html" %}
 {% load static %}
-
+{% load formatters %}
 
 {% block content %}
 {% include "partials/dashboard_header.html" %}
@@ -15,247 +15,51 @@
     <div class="flex gap-2">
       <button
         class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
-        <span class="material-symbols-outlined text-lg">file_download</span>
-        Export CSV
+        <span class="material-symbols-outlined text-lg">file_download</span> Export CSV
       </button>
       <button
         class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
-        <span class="material-symbols-outlined text-lg">filter_list</span>
-        Bulk Actions
+        <span class="material-symbols-outlined text-lg">filter_list</span> Bulk Actions
       </button>
     </div>
   </div>
-  <!-- Filters & Search -->
-  <div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm mb-6">
-    <div
-      class="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row gap-4 justify-between items-center">
-      <div class="flex gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-lg w-full lg:w-auto">
-        <button
-          class="flex-1 lg:flex-none px-4 py-1.5 rounded-md text-sm font-semibold bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-slate-100">All
-          Members</button>
-        <button
-          class="flex-1 lg:flex-none px-4 py-1.5 rounded-md text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">Active</button>
-        <button
-          class="flex-1 lg:flex-none px-4 py-1.5 rounded-md text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">Expired</button>
-        <button
-          class="flex-1 lg:flex-none px-4 py-1.5 rounded-md text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">Overdue</button>
-      </div>
-      <div
-        class="flex items-center w-full lg:w-96 bg-slate-50 dark:bg-slate-900 rounded-lg px-4 border border-slate-200 dark:border-slate-700 focus-within:border-primary">
-        <span class="material-symbols-outlined text-slate-400 mr-2">search</span>
-        <input class="bg-transparent border-none focus:ring-0 text-sm w-full py-2.5 placeholder:text-slate-500"
-          placeholder="Search name, email, or ID..." />
-      </div>
-    </div>
-    <!-- Table Container -->
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-slate-50 dark:bg-slate-900/50">
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Member
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Plan
-              Type</th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Last
-              Check-in</th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Payment
-              Status</th>
-            <th
-              class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
-              Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-          <!-- Member Row 1 -->
-          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div
-                  class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden">
-                  <img class="w-full h-full object-cover" data-alt="Portrait of Alex Johnson"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDSYERJn88JHVk-9LDUYH2aZyJl0w1fkPhoQ3q_q4d_1hJZtBU4-ZXqGK5WYi019puBNBIUj5ig74peINGschAQj5iJHLes-Iey0nc94PUguliC8guVn3uQQiUfVlaMZo4QI_4ew44n1Mj1gJGqoXOfGNf203ObQcQ-ABLrzYCJ2QqMwHtoe7XBoO40Qe0fmxDrS5ZVm4sFlWw_gdoHiVwt2pVIgYEjpFjh2oQ0aFc71STVUMhwPWMUZU2AnSGjpCxkSuMtqIG80k" />
-                </div>
-                <div>
-                  <p class="text-sm font-bold text-slate-900 dark:text-slate-100">Alex Johnson</p>
-                  <p class="text-xs text-slate-500">ID: GM-8829</p>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
-                Premium Plus
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex flex-col">
-                <span class="text-sm text-slate-700 dark:text-slate-300">Today, 10:15 AM</span>
-                <span class="text-[10px] text-slate-400 uppercase font-bold">Main Floor</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-                <span class="size-1.5 rounded-full bg-green-600 dark:bg-green-400"></span>
-                Paid
-              </span>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <button class="text-slate-400 hover:text-primary transition-colors">
-                <span class="material-symbols-outlined">edit_square</span>
-              </button>
-              <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ml-3">
-                <span class="material-symbols-outlined">more_vert</span>
-              </button>
-            </td>
-          </tr>
-          <!-- Member Row 2 -->
-          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div
-                  class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden">
-                  <img class="w-full h-full object-cover" data-alt="Portrait of Maria Garcia"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbwPwBmRzA0WhkUacopVzYCmipCW5PEILVRxJkGPARQl8FzJMib_ddjM-uT016IzEFmlCR96SMwP51E9-oipC9uxpbT-ZIy_F0hzmZ_MJ2TqaqzI7bdrz-qUhlz--binViR8do_miTcpLFoLBKIppuumpaEK6o-k1RmTLYCML4hzgKUuGFOjBLxbdtfU4s3T7sFGayxAS1nkUznQZLUWkCg3b2k9jbjVRotMFnvvs86Nb4By9xQkRxZz3v-CoTswvBMEa1aT75XrQ" />
-                </div>
-                <div>
-                  <p class="text-sm font-bold text-slate-900 dark:text-slate-100">Maria Garcia</p>
-                  <p class="text-xs text-slate-500">ID: GM-9102</p>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
-                Basic Monthly
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex flex-col">
-                <span class="text-sm text-slate-700 dark:text-slate-300">Yesterday</span>
-                <span class="text-[10px] text-slate-400 uppercase font-bold">Cardio Zone</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400">
-                <span class="size-1.5 rounded-full bg-orange-600 dark:bg-orange-400"></span>
-                Overdue
-              </span>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <button class="text-slate-400 hover:text-primary transition-colors">
-                <span class="material-symbols-outlined">edit_square</span>
-              </button>
-              <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ml-3">
-                <span class="material-symbols-outlined">more_vert</span>
-              </button>
-            </td>
-          </tr>
-          <!-- Member Row 3 -->
-          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div
-                  class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden">
-                  <img class="w-full h-full object-cover" data-alt="Portrait of James Wilson"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX9kPocAbxF53UyVgxzJW_-BZisMFkRRITO3H5c3Qmy-JJJY8ZOmwy29Z6hQ1CcQ9vnwxE5llGGTfz9jQzCHmUQ2UbVel2e4nW3bHnqBsGwG-qtk3EbJ5fyK3gyCKT5XeqJAWW1nLJNHhVg8fohUkS6gHO1IqKIA_1USxrNiTRIaqEnmiCFxLyFNE4g31y02keBi56IutYtZrEBnCfKVEX8gL240XZk4lThI_Vd7I-zuAokANg55SmcEtSvM4aNQZ5mE49VVX1vvQ" />
-                </div>
-                <div>
-                  <p class="text-sm font-bold text-slate-900 dark:text-slate-100">James Wilson</p>
-                  <p class="text-xs text-slate-500">ID: GM-7734</p>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
-                Annual Pass
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex flex-col">
-                <span class="text-sm text-slate-700 dark:text-slate-300">2 days ago</span>
-                <span class="text-[10px] text-slate-400 uppercase font-bold">Pool Area</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-                <span class="size-1.5 rounded-full bg-green-600 dark:bg-green-400"></span>
-                Paid
-              </span>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <button class="text-slate-400 hover:text-primary transition-colors">
-                <span class="material-symbols-outlined">edit_square</span>
-              </button>
-              <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ml-3">
-                <span class="material-symbols-outlined">more_vert</span>
-              </button>
-            </td>
-          </tr>
-          <!-- Member Row 4 -->
-          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div
-                  class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden">
-                  <img class="w-full h-full object-cover" data-alt="Portrait of Sarah Chen"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxY_HjG3XP18q0JnYd2vdj3KU2vKIe6Kn0KHtLF2Ep_VpcB74voLrdqJhebSSQ6XCNozF9IrFJnPnjlPXlSoWOS2D0F3LTJTgtreEUMiXUWLZRzFCtonuRXM0f1Unc4q0pQMnACFz2MPmBs0RNUlb4kYwDM-DysE5IiVS-Y-PjYcIpVzbr9ZYl6dwcvAc1Ei9-v6sX20l62kEiwp4zW7Zs0cJibMKpd8dOlxF6HVGXZ5iaTXdW9R6OASz9kGKUJVrOnHj_fg6Csz4" />
-                </div>
-                <div>
-                  <p class="text-sm font-bold text-slate-900 dark:text-slate-100">Sarah Chen</p>
-                  <p class="text-xs text-slate-500">ID: GM-8192</p>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
-                Premium Plus
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex flex-col">
-                <span class="text-sm text-slate-700 dark:text-slate-300">Oct 24, 2023</span>
-                <span class="text-[10px] text-slate-400 uppercase font-bold">CrossFit Box</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                <span class="size-1.5 rounded-full bg-slate-500 dark:bg-slate-500"></span>
-                Expired
-              </span>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <button class="text-slate-400 hover:text-primary transition-colors">
-                <span class="material-symbols-outlined">edit_square</span>
-              </button>
-              <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ml-3">
-                <span class="material-symbols-outlined">more_vert</span>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <!-- Pagination -->
-    <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
-      <p class="text-xs text-slate-500 dark:text-slate-400">Showing 1 to 4 of 1,240 members</p>
-      <div class="flex gap-2">
-        <button class="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded text-sm disabled:opacity-50"
-          disabled="">Previous</button>
-        <button class="px-3 py-1 bg-primary text-slate-900 rounded text-sm font-bold">1</button>
-        <button class="px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-sm">2</button>
-        <button class="px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-sm">3</button>
-        <span class="px-1 py-1 text-slate-400">...</span>
-        <button class="px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-sm">31</button>
-        <button class="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded text-sm">Next</button>
-      </div>
-    </div>
+
+  <!-- Filters Tabs -->
+  <div class="flex gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-lg w-full lg:w-auto">
+    <button hx-get="{% url 'member_list_partial' %}?filter=all" hx-target="#member-table-body" hx-swap="innerHTML"
+      class="flex-1 lg:flex-none px-4 py-1.5 rounded-md text-sm font-semibold bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-slate-100">
+      All Members
+    </button>
+    <button hx-get="{% url 'member_list_partial' %}?filter=active" hx-target="#member-table-body" hx-swap="innerHTML"
+      class="flex-1 lg:flex-none px-4 py-1.5 rounded-md text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+      Active
+    </button>
+    <button hx-get="{% url 'member_list_partial' %}?filter=expired" hx-target="#member-table-body" hx-swap="innerHTML"
+      class="flex-1 lg:flex-none px-4 py-1.5 rounded-md text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+      Expired
+    </button>
+    <button hx-get="{% url 'member_list_partial' %}?filter=overdue" hx-target="#member-table-body" hx-swap="innerHTML"
+      class="flex-1 lg:flex-none px-4 py-1.5 rounded-md text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+      Overdue
+    </button>
   </div>
- 
+
+  <table class="w-full text-left border-collapse">
+  <thead>
+  <tr class="bg-slate-50 dark:bg-slate-900/50">
+    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Member</th>
+    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Plan Type</th>
+    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Last Payment</th>
+    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Payment Status</th>
+    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
+  </tr>
+</thead>
+
+  <tbody id="member-table-body">
+    {% include "partials/member_rows.html" with members=members %}
+  </tbody>
+</table>
+
+  </div>
 </main>
 {% endblock %}

@@ -1,0 +1,59 @@
+{% for member in members %}
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+  <td class="px-6 py-4">
+    <div class="flex items-center gap-3">
+      <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden">
+        {{ member.name|slice:":1"|upper }}
+      </div>
+      <div>
+        <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ member.name }}</p>
+        <p class="text-xs text-slate-500">Contact: {{ member.contact }}</p>
+      </div>
+    </div>
+  </td>
+  <td class="px-6 py-4">
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+      {{ member.type|capfirst }}
+    </span>
+  </td>
+  <td class="px-6 py-4">
+    {% with last_payment=member.member_payments.last %}
+    {% if last_payment %}
+      <div class="flex flex-col">
+        <span class="text-sm text-slate-700 dark:text-slate-300">{{ last_payment.date_of_payment }}</span>
+        <span class="text-[10px] text-slate-400 uppercase font-bold">Expires: {{ last_payment.expiration_date }}</span>
+      </div>
+    {% else %}
+      <span class="text-sm text-slate-500">No Payment</span>
+    {% endif %}
+    {% endwith %}
+  </td>
+  <td class="px-6 py-4">
+    {% with last_payment=member.member_payments.last %}
+    {% if last_payment and last_payment.expiration_date >= today %}
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+        <span class="size-1.5 rounded-full bg-green-600 dark:bg-green-400"></span>
+        Paid
+      </span>
+    {% else %}
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
+        <span class="size-1.5 rounded-full bg-red-600 dark:bg-red-400"></span>
+        Expired
+      </span>
+    {% endif %}
+    {% endwith %}
+  </td>
+  <td class="px-6 py-4 text-right">
+    <button class="text-slate-400 hover:text-primary transition-colors">
+      <span class="material-symbols-outlined">edit_square</span>
+    </button>
+    <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ml-3">
+      <span class="material-symbols-outlined">more_vert</span>
+    </button>
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="5" class="px-6 py-4 text-center text-sm text-slate-500">No members found.</td>
+</tr>
+{% endfor %}
