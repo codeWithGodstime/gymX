@@ -54,13 +54,12 @@ class GymOwnerSignupWizard(SessionWizardView):
         )
         print(f"[WIZARD] User created - ID: {user.id}, Email: {user.email}")
 
-        # Store user and tenant in session
-        self.request.session['new_user_id'] = user.id
-        self.request.session['new_tenant_id'] = tenant.id
-        self.request.session.save()
-        print(f"[WIZARD] Session saved - User ID: {user.id}, Tenant ID: {tenant.id}")
+        user.is_active = True
+        user.save()
 
-        return redirect('subscription')
+        # Log in
+        from django.contrib.auth import login
+        login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
 
 class TenantLoginView(LoginView):
     template_name = "account/login.html"
