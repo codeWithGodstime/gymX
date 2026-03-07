@@ -67,6 +67,7 @@ def dashboard_recent_activity(request):
         "partials/dashboard_recent_activity.html",
         {"activities": activities}
     )
+
 class MemberList(LoginRequiredMixin, ListView):
     model = Members
     template_name = 'dashboard/members_list.html'
