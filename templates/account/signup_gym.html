@@ -1,0 +1,59 @@
+{% extends "_base.html" %}
+
+{% block title %}Gym Details - GymX{% endblock %}
+
+{% block content %}
+
+{% include 'partials/public_nav.html' %}
+
+<main class="flex-1 py-12 px-6 lg:px-40 flex justify-center">
+    <div class="max-w-3xl w-full">  <!-- narrower, more centered -->
+
+        <!-- Simpler progress -->
+        <div class="mb-10">
+            <p class="text-sm font-semibold uppercase tracking-wider text-slate-500">
+                Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }} — Gym Information
+            </p>
+            <div class="mt-3 rounded-full bg-slate-200 h-2">
+                <div class="h-full bg-primary rounded-full" style="width: {{ wizard.steps.percent_complete }}%;"></div>
+            </div>
+        </div>
+
+        <h1 class="text-3xl font-bold mb-2 text-slate-900 dark:text-white">
+            Tell us about your gym
+        </h1>
+        <p class="text-slate-600 dark:text-slate-400 mb-10">
+            This helps us set up your unique workspace.
+        </p>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            {{ wizard.management_form }}
+
+            {% for field in wizard.form %}
+            <div>
+                <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ field.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="flex justify-between mt-12">
+                <button name="wizard_goto_step" value="{{ wizard.steps.prev }}" type="submit"
+                        class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+                    ← Back to account
+                </button>
+
+                <button type="submit" class="px-8 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700">
+                    Finish & Create Gym →
+                </button>
+            </div>
+        </form>
+
+    </div>
+</main>
+
+{% include 'partials/footer.html' %}
+{% endblock %}

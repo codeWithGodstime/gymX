@@ -11,11 +11,56 @@ from django.db.transaction import atomic
 
 from apps.public_app.models import Gym, Domain, SubscriptionPlan
 from apps.public_app.paystack import PaystackSubscriptionManager
-from .forms import GymOwnerSignupForm
-
+from .forms import GymOwnerForm, UserSignupForm
+from formtools.wizard.views import SessionWizardView
 
 User = get_user_model()
 
+
+class GymOwnerSignupWizard(SessionWizardView):
+    form_list = [("user", UserSignupForm), ("gym", GymOwnerForm)]
+    templates = {  # Correct spelling
+        "user": "account/signup.html",
+        "gym": "account/signup_gym.html"
+    }
+
+    def get_template_names(self):
+        return [self.templates.get(self.steps.current, self.template_name)]
+
+    @atomic
+    def done(self, form_list, **kwargs):
+        form_data = self.get_all_cleaned_data()
+        print(f"[WIZARD] Form data collected: {form_data}")
+
+        # Create Gym tenant
+        schema_name = form_data['gym_name'].lower().replace(" ", "")
+        tenant = Gym.objects.create(schema_name=schema_name, name=form_data['gym_name'])
+        print(f"[WIZARD] Gym created - ID: {tenant.id}, Name: {tenant.name}, Schema: {tenant.schema_name}")
+
+        # Create Domain
+        domain = Domain.objects.create(
+            domain=f"{schema_name}.{settings.DOMAIN_HOST}",
+            tenant=tenant,
+            is_primary=True
+        )
+        print(f"[WIZARD] Domain created: {domain.domain}")
+
+        # Create User
+        user = User.objects.create_user(
+            email=form_data['email'],
+            password=form_data['password1'],  # Make sure your form field matches this
+            username=schema_name,
+            tenant=tenant
+        )
+        print(f"[WIZARD] User created - ID: {user.id}, Email: {user.email}")
+
+        # Store user and tenant in session
+        self.request.session['new_user_id'] = user.id
+        self.request.session['new_tenant_id'] = tenant.id
+        self.request.session.save()
+        print(f"[WIZARD] Session saved - User ID: {user.id}, Tenant ID: {tenant.id}")
+
+        return redirect('subscription')
 
 class TenantLoginView(LoginView):
     template_name = "account/login.html"
@@ -39,25 +84,9 @@ class TenantLoginView(LoginView):
                 next_path = self.request.GET.get('next') or '/accounts/dashboard/'
                 redirect_url = f"{scheme}://{tenant_domain.domain}{port}{next_path}"
                 return redirect(redirect_url)
-
-        # Fallback: no tenant → stay on public or go to some default
-        # (or let allauth's default success URL kick in)
+            
         return response
 
-    # def get_success_url(self):
-    #     user = self.request.user
-
-    #     if user.tenant:
-    #         tenant = user.tenant
-    #         tenant_domain = tenant.domains.filter(is_primary=True).first()
-
-    #         if tenant_domain:
-    #             if settings.DEBUG:
-    #                 return f"http://{tenant_domain.domain}:8000/accounts/dashboard/"
-    #             return f"http://{tenant_domain.domain}/accounts/dashboard/"
-
-    #     return reverse("accounts_login")
-    
 
 class TenantLogoutView(LogoutView):
     template_name = 'account/logout.html'
@@ -67,59 +96,6 @@ class TenantLogoutView(LogoutView):
         if next_page:
             return next_page
         return reverse('accounts:login')
-
-
-class GymOwnerSignupView(FormView):
-    form_class = GymOwnerSignupForm
-    template_name = 'account/signup.html'
-
-    @atomic
-    def form_valid(self, form, *args, **kwargs):
-        # Store user data in session for later use
-        self.request.session['signup_data'] = {
-            'gym_name': form.cleaned_data['gym_name'],
-            'email': form.cleaned_data['email'],
-            'password': form.cleaned_data['password1'],
-        }
-        
-        print(f"[VIEW] GymOwnerSignupView - Processing signup for: {form.cleaned_data['gym_name']}")
-        
-        # Create Gym tenant
-        tenant = Gym.objects.create(
-            schema_name=form.cleaned_data['gym_name'].lower().replace(' ', ''),
-            name=form.cleaned_data['gym_name'],
-        )
-        
-        print(f"[VIEW] GymOwnerSignupView - Gym created - ID: {tenant.id}, Name: {tenant.name}, Schema: {tenant.schema_name}")
-
-        # Create Domain
-        domain = Domain.objects.create(
-            domain=f"{form.cleaned_data['gym_name'].lower().replace(' ', '')}.{settings.DOMAIN_HOST}",
-            tenant=tenant,
-            is_primary=True
-        )
-        
-        print(f"[VIEW] GymOwnerSignupView - Domain created: {domain.domain}")
-
-        # Create User
-        user = User.objects.create_user(
-            email=form.cleaned_data['email'],
-            password=form.cleaned_data['password1'],
-            username=form.cleaned_data['gym_name'].lower().replace(' ', ''),
-            tenant=tenant
-        )
-        
-        print(f"[VIEW] GymOwnerSignupView - User created - ID: {user.id}, Email: {user.email}")
-
-        # Store user and tenant in session
-        self.request.session['new_user_id'] = user.id
-        self.request.session['new_tenant_id'] = tenant.id
-        self.request.session.save()  # Ensure session is saved
-        
-        print(f"[VIEW] GymOwnerSignupView - Session saved - User ID: {user.id}, Tenant ID: {tenant.id}")
-        
-        # Redirect to subscription page
-        return redirect('subscription')
 
 
 class SubscriptionView(TemplateView):
