@@ -1,581 +1,181 @@
-{% load static %}
-<!doctype html>
-<html lang="en">
+{% extends "_base.html" %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="GymX - Complete gym management solution with attendance tracking, membership management, and data insights.">
-    <meta name="author" content="">
-    <title>GymX - Gym Management Made Simple</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #ec4899;
-            --dark-color: #1f2937;
-            --light-color: #f3f4f6;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-            background-color: #fff;
-        }
-
-        /* Navigation */
-        .navbar {
-            background: linear-gradient(135deg, var(--dark-color) 0%, #374151 100%);
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #fff !important;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, 0.8) !important;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            margin: 0 0.5rem;
-        }
-
-        .nav-link:hover {
-            color: #fff !important;
-        }
-
-        .btn-nav {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: #fff;
-            border: none;
-            font-weight: 600;
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .btn-nav:hover {
-            color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            padding: 6rem 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="1200" height="600" fill="%23667eea"/><rect width="1200" height="600" fill="url(%23grid)"/></svg>');
-            opacity: 0.5;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero .btn {
-            padding: 0.8rem 2rem;
-            font-weight: 600;
-            border-radius: 50px;
-            border: none;
-            font-size: 1.1rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin: 0 0.5rem;
-        }
-
-        .hero .btn-light {
-            color: var(--primary-color);
-        }
-
-        .hero .btn-light:hover {
-            color: var(--primary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .hero .btn-outline-light {
-            border-width: 2px;
-        }
-
-        .hero .btn-outline-light:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Features Section */
-        .features {
-            padding: 5rem 0;
-            background: #f8fafc;
-        }
-
-        .features h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 1rem;
-            color: var(--dark-color);
-        }
-
-        .features-subtitle {
-            text-align: center;
-            color: #6b7280;
-            font-size: 1.1rem;
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .feature-card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .feature-icon {
-            font-size: 3.5rem;
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .feature-card h4 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--dark-color);
-        }
-
-        .feature-card p {
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        /* Pricing Section */
-        .pricing {
-            padding: 5rem 0;
-            background: #fff;
-        }
-
-        .pricing h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 1rem;
-            color: var(--dark-color);
-        }
-
-        .pricing-subtitle {
-            text-align: center;
-            color: #6b7280;
-            font-size: 1.1rem;
-            margin-bottom: 3rem;
-        }
-
-        .pricing-card {
-            background: #fff;
-            border: 2px solid #e5e7eb;
-            border-radius: 15px;
-            padding: 2.5rem;
-            text-align: center;
-            position: relative;
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .pricing-card:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.2);
-        }
-
-        .pricing-card.featured {
-            border-color: var(--primary-color);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
-            transform: scale(1.05);
-        }
-
-        .pricing-card.featured:hover {
-            transform: scale(1.05) translateY(-8px);
-            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.25);
-        }
-
-        .pricing-badge {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: #fff;
-            padding: 0.5rem 1.2rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: inline-block;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .pricing-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin: 1rem 0;
-        }
-
-        .pricing-price {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            margin: 1.5rem 0;
-        }
-
-        .pricing-price span {
-            font-size: 1.2rem;
-            color: #6b7280;
-        }
-
-        .pricing-description {
-            color: #6b7280;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-        }
-
-        .pricing-features {
-            list-style: none;
-            margin-bottom: 2rem;
-            text-align: left;
-        }
-
-        .pricing-features li {
-            padding: 0.7rem 0;
-            color: #6b7280;
-            border-bottom: 1px solid #e5e7eb;
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .pricing-features li:last-child {
-            border-bottom: none;
-        }
-
-        .pricing-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .pricing-btn {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: #fff;
-            border: none;
-            font-weight: 600;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            width: 100%;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .pricing-btn:hover {
-            color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
-        }
-
-        .pricing-card.featured .pricing-btn {
-            background: var(--primary-color);
-        }
-
-        /* CTA Section */
-        .cta {
-            background: linear-gradient(135deg, var(--dark-color) 0%, #374151 100%);
-            color: #fff;
-            padding: 4rem 0;
-            text-align: center;
-        }
-
-        .cta h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-        }
-
-        .cta p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        /* Footer */
-        footer {
-            background: #1a1f2e;
-            color: #fff;
-            padding: 2rem 0;
-            text-align: center;
-            border-top: 1px solid #374151;
-        }
-
-        footer p {
-            margin: 0;
-            opacity: 0.8;
-        }
-
-        /* Utility Classes */
-        .text-gradient {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .features h2,
-            .pricing h2 {
-                font-size: 1.8rem;
-            }
-
-            .pricing-card.featured {
-                transform: scale(1);
-            }
-
-            .pricing-card.featured:hover {
-                transform: translateY(-8px);
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-dumbbell"></i> GymX
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="#features">Features</a>
-                    <a class="nav-link" href="#pricing">Pricing</a>
-                    <a class="nav-link" href="{% url 'account_login' %}">Login</a>
-                    <a class="btn btn-nav" href="{% url 'account_signup' %}">Start Free Trial</a>
+{% block content %}
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+        <header
+            class="sticky top-0 z-50 w-full border-b border-slate-200/50 dark:border-slate-800/50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 md:px-20 py-4">
+            <div class="mx-auto flex max-w-[1200px] items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-slate-900">
+                        <span class="material-symbols-outlined font-bold">exercise</span>
+                    </div>
+                    <h2 class="text-xl font-black tracking-tight text-slate-900 dark:text-slate-100 uppercase">
+                        GymFlow</h2>
+                </div>
+                <nav class="hidden md:flex flex-1 justify-center gap-10">
+                    <a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Features</a>
+                    <a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Pricing</a>
+                    <a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Success
+                        Stories</a>
+                    <a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Contact</a>
+                </nav>
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'accounts_login' %}"
+                        class="hidden sm:flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm font-bold transition-all hover:opacity-80">
+                        <span>Login</span>
+                    </a>
+                    <a href="{% url 'accounts_signup' %}"
+                        class="flex min-w-[120px] cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-primary text-slate-900 text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+                        <span>Get Started</span>
+                    </a>
                 </div>
             </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Gym Management Made Simple</h1>
-                <p>Streamline your gym operations with our all-in-one platform. Track attendance, manage memberships, visualize data, and grow your business.</p>
-                <div>
-                    <a href="{% url 'account_signup' %}" class="btn btn-light">Start Your Free Trial</a>
-                    <a href="#features" class="btn btn-outline-light">Learn More</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <h2>Powerful Features Built for Gym Owners</h2>
-            <p class="features-subtitle">Everything you need to run your gym efficiently and profitably</p>
-            
-            <div class="row g-4">
-                <!-- Feature 1 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-clock"></i>
+        </header>
+        <main class="flex-1">
+            <section class="mx-auto max-w-[1200px] px-6 py-12 md:py-24">
+                <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+                    <div class="flex flex-col gap-8">
+                        <div
+                            class="inline-flex w-fit items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+                            <span class="relative flex h-2 w-2">
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                            </span>
+                            Multi-Tenant Platform
                         </div>
-                        <h4>Track Attendance</h4>
-                        <p>Monitor member check-ins and attendance patterns in real-time. Identify peak hours and optimize your gym's resources.</p>
+                        <h1
+                            class="text-5xl font-black leading-[1.1] tracking-tight text-slate-900 dark:text-slate-100 md:text-7xl">
+                            Manage Your Gym <span class="text-primary">Like a Pro</span>
+                        </h1>
+                        <p class="text-lg leading-relaxed text-slate-600 dark:text-slate-400 max-w-[540px]">
+                            The all-in-one platform to streamline member management, automate billing, and grow your
+                            fitness business effortlessly. Stop juggling spreadsheets and start scaling.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="{% url 'accounts_signup' %}"
+                                class="flex h-14 items-center justify-center rounded-xl bg-primary px-8 text-lg font-bold text-slate-900 shadow-xl shadow-primary/25 transition-all hover:translate-y-[-2px]">
+                                Get Started for Free
+                            </a>
+                            
+                        </div>
+                        <div class="flex items-center gap-4 text-sm text-slate-500">
+                            <div class="flex -space-x-2">
+                                <div class="h-8 w-8 rounded-full bg-slate-300 border-2 border-background-light"
+                                    data-alt="Profile photo of a gym owner"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBgd8sqZup2w7Gx8cByM1ezcv0zs4wKsCrKKl3Ftnbr26A0wAApvfcklXOS9wVY53Ie8WPzNhshf5dG9lXJcrhixxfNm0_5kEQjoe9qR0VLryxMxmhgJ91nYfm-LUS0vki97Zn0DCfNghLytRXWVjgsoqVRdVttDu9M9Hs8c70FD7Y9qX4zOla2JajGI9WLDGL_sfrgp9Mur5lM417rpDaRVwYLLFXyjzMRlMoVeGpQytEsT7UpjfvMtizg45l6rRfWFLvGefJdis4')">
+                                </div>
+                                <div class="h-8 w-8 rounded-full bg-slate-400 border-2 border-background-light"
+                                    data-alt="Profile photo of a trainer"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDwDW_ngrA6fO7Vtu-sAVYCXiioH21Nw7aPxNUyhbHLgu5yBCBQKIRW_f7w3Nq4V-Rj3NdXzKp85nobbQKRAPQEAkf3pJ9iyyOEj_k2NYX3bFQ3BP5XpaORWL7nDpzK7s709pzEpcxWoEnomuu6EIb4Q5DSDZmtQemKHpYyPYk610OJeVh8BIBEIiTXggG1kK8mIBCk5b8FVMXjRudh_yrnDISnOzyZ4aDaJyRkeahcM1mh5tivgMDCp4ralhxFag1PeyKz4fNSq94')">
+                                </div>
+                                <div class="h-8 w-8 rounded-full bg-slate-500 border-2 border-background-light"
+                                    data-alt="Profile photo of a user"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCW9MgRwojxUBiWCHOcOo08rGyCAPw3EfD73nhnd_iRioBwVLYwPQa-SXvSQF408432PAw-RNBIMI73T0flU5BzggYGWUdFPjedT9QO7AUWExv8JPn632FBxD-8Ksa1_R9l54fsKBK3CG75mcMOYYhnayMb43cRyfhJC7BwRoKyAd2VVIyIhVNYR-ZztXndv3ZrufIFLzzOfFMHxf2kfXp32oqYg5fGrh31mc0-qRxBGyCATvQ9uNtV2NeUgfbpi0-bbUFPqQLoyVk')">
+                                </div>
+                            </div>
+                            <span>Joined by 500+ gym owners this month</span>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div
+                            class="absolute -inset-4 rounded-[2rem] bg-gradient-to-tr from-primary/30 to-transparent blur-3xl opacity-50">
+                        </div>
+                        <div class="relative aspect-video w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white shadow-2xl dark:bg-slate-900"
+                            data-alt="Modern high-end gym interior with equipment"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCjh14Taylw6LOOskUJ3Lc7zHK6sElCJ2SfzTOrOgYDePJjmRwBeakKODSn4_P96cKREXtmStCFFY-c7Zplxfks4xCpe52gXA3E-1nXyp8-89W5SFIGeondyCFKOX6LB2ch5Vftq3bPwGz3nLefqbbklpLkb3oxKsB9kr3_jv_qYWFWKgpobRj5T88RtyoTFyevF-mTX3av35PJJ3WRs2wgbKPIX_b9XJCVDt7Cfi3hlPHLSjVqE4ABZ7wAsDWx7Ax27TWp699uleE'); background-size: cover; background-position: center;">
+                            <div class="absolute inset-0 bg-gradient-to-t from-background-dark/40 to-transparent">
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Feature 2 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-users"></i>
+            </section>
+            <section class="bg-slate-50 dark:bg-slate-900/30 py-24">
+                <div class="mx-auto max-w-[1200px] px-6">
+                    <div class="mb-16 flex flex-col items-center text-center">
+                        <h2
+                            class="mb-4 text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100 md:text-4xl">
+                            Everything you need to run your space
+                        </h2>
+                        <p class="max-w-[600px] text-lg text-slate-600 dark:text-slate-400">
+                            Our comprehensive suite of tools helps you focus on your members while we handle the
+                            logistics and backend complexity.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+                        <div
+                            class="group relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
+                            <div
+                                class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-slate-900">
+                                <span class="material-symbols-outlined">group</span>
+                            </div>
+                            <h3 class="mb-3 text-xl font-bold text-slate-900 dark:text-slate-100">Member Tracking
+                            </h3>
+                            <p class="text-slate-600 dark:text-slate-400">
+                                Keep track of attendance, memberships, and fitness goals in one central location
+                                with real-time check-ins.
+                            </p>
                         </div>
-                        <h4>Manage Membership</h4>
-                        <p>Effortlessly handle membership registrations, renewals, and cancellations. Keep all member information organized in one place.</p>
+                        <div
+                            class="group relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
+                            <div
+                                class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-slate-900">
+                                <span class="material-symbols-outlined">payments</span>
+                            </div>
+                            <h3 class="mb-3 text-xl font-bold text-slate-900 dark:text-slate-100">Automated Billing
+                            </h3>
+                            <p class="text-slate-600 dark:text-slate-400">
+                                Simplify your revenue with automated recurring payments, tax handling, and
+                                professional digital invoicing.
+                            </p>
+                        </div>
+                        <div
+                            class="group relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
+                            <div
+                                class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-slate-900">
+                                <span class="material-symbols-outlined">dashboard_customize</span>
+                            </div>
+                            <h3 class="mb-3 text-xl font-bold text-slate-900 dark:text-slate-100">Branded Dashboard
+                            </h3>
+                            <p class="text-slate-600 dark:text-slate-400">
+                                Provide a premium experience with a custom-branded interface that matches your gym's
+                                unique identity.
+                            </p>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Feature 3 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-chart-line"></i>
+            </section>
+            <section class="mx-auto max-w-[1000px] px-6 py-24">
+                <div
+                    class="relative overflow-hidden rounded-[2.5rem] bg-slate-900 px-8 py-16 text-center shadow-2xl dark:bg-slate-800/50 border border-slate-800">
+                    <div class="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-primary opacity-10 blur-[100px]">
+                    </div>
+                    <div
+                        class="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-primary opacity-10 blur-[100px]">
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center gap-8">
+                        <h2 class="max-w-[600px] text-4xl font-black leading-tight text-white md:text-5xl">
+                            Ready to transform your gym operations?
+                        </h2>
+                        <p class="max-w-[500px] text-lg text-slate-400">
+                            Join over 500+ gym owners who have optimized their business and increased retention with
+                            GymFlow.
+                        </p>
+                        <div class="flex w-full max-w-md flex-col gap-4 sm:flex-row">
+                            <a href="{% url 'accounts_signup' %}"
+                                class="flex-1 rounded-xl bg-primary px-8 py-4 text-lg font-bold text-slate-900 transition-all hover:scale-105 active:scale-95">
+                                Start 14-Day Free Trial
+                            </a>
                         </div>
-                        <h4>Data Visualization & Insights</h4>
-                        <p>Get actionable insights from your gym data with beautiful charts and reports. Make data-driven decisions to grow your business.</p>
+                        <p class="text-sm text-slate-500">No credit card required. Cancel anytime.</p>
                     </div>
                 </div>
+            </section>
+        </main>
+        
+    </div>
+</div>
 
-                <!-- Feature 4 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-credit-card"></i>
-                        </div>
-                        <h4>Track Subscriptions</h4>
-                        <p>Manage member subscriptions, track payments, and automate recurring billing. Never miss a payment with automated reminders.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
-        <div class="container">
-            <h2>Simple, Transparent Pricing</h2>
-            <p class="pricing-subtitle">Choose the perfect plan for your gym</p>
-            
-            <div class="row g-4 justify-content-center">
-                <!-- Basic Plan -->
-                <div class="col-md-6 col-lg-5">
-                    <div class="pricing-card">
-                        <span class="pricing-badge">Basic</span>
-                        <h3 class="pricing-name">Basic</h3>
-                        <div class="pricing-price">
-                            $29 <span>/ month</span>
-                        </div>
-                        <p class="pricing-description">Perfect for small gyms and studios</p>
-                        
-                        <ul class="pricing-features">
-                            <li>Up to 100 members</li>
-                            <li>Attendance tracking</li>
-                            <li>Basic membership management</li>
-                            <li>Monthly reports</li>
-                            <li>Email support</li>
-                            <li>Mobile app access</li>
-                        </ul>
-                        
-                        <a href="{% url 'account_signup' %}" class="btn pricing-btn">Get Started</a>
-                    </div>
-                </div>
-
-                <!-- Premium Plan -->
-                <div class="col-md-6 col-lg-5">
-                    <div class="pricing-card featured">
-                        <span class="pricing-badge">Premium</span>
-                        <h3 class="pricing-name">Premium</h3>
-                        <div class="pricing-price">
-                            $79 <span>/ month</span>
-                        </div>
-                        <p class="pricing-description">For growing and established gyms</p>
-                        
-                        <ul class="pricing-features">
-                            <li>Unlimited members</li>
-                            <li>Advanced attendance analytics</li>
-                            <li>Complete membership management</li>
-                            <li>Subscription & billing automation</li>
-                            <li>Advanced reports & insights</li>
-                            <li>Priority 24/7 support</li>
-                            <li>Custom integrations</li>
-                            <li>Staff management</li>
-                        </ul>
-                        
-                        <a href="{% url 'account_signup' %}" class="btn pricing-btn">Start Free Trial</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <h2>Ready to Transform Your Gym?</h2>
-            <p>Join hundreds of gym owners who are already using GymX to run their businesses more efficiently.</p>
-            <a href="{% url 'account_signup' %}" class="btn btn-light btn-lg">Start Your 14-Day Free Trial</a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 GymX. All rights reserved. | <a href="#" style="color: #fff; text-decoration: none;">Privacy Policy</a> | <a href="#" style="color: #fff; text-decoration: none;">Terms of Service</a></p>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+{% endblock content %}
