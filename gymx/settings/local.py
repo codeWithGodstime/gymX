@@ -42,7 +42,8 @@ AUTH_USER_MODEL = "accounts.User"
 
 # development.py or your development settings
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"  # <-- THIS is required for collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # media files settings for development
 MEDIA_URL = "/media/"
