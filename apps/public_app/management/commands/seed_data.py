@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from django_tenants.utils import schema_context, get_tenant_model
 from django.db import connection
 from apps.public_app.models import Domain, Gym
-from apps.tenant_app.models import User, Members, MemberPayment, Activity
+from apps.tenant_app.models import User, Member, MemberPayment, Activity
 from datetime import date, timedelta
 import random
 import uuid
@@ -75,7 +75,7 @@ class Command(BaseCommand):
                 # Seed members and payments
                 members = []
                 for i in range(10):
-                    member = Members.objects.create(
+                    member = Member.objects.create(
                         name=f"Member {i+1}",
                         contact=f"080{i+1:07d}",
                         type=random.choice(["one-time", "monthly"])

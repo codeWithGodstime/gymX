@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -53,20 +53,58 @@ class Activity(models.Model):
         return f"{self.activity_type} - {self.created_at}"
 
 
-class Members(models.Model):
-    name = models.CharField(max_length=50)
-    contact = models.CharField(max_length=16)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
-    type = models.CharField(max_length=10, choices=[('one-time', 'one-time'), ('monthly', 'monthly')])
+class Member(models.Model):
+    """
+    Renamed from 'Members' → singular 'Member' (Django convention)
+    """
+    name = models.CharField(max_length=100)           # increased a bit
+    contact = models.CharField(max_length=20)         # phone numbers often need more space
+    member_type = models.CharField(                    # renamed 'type' → more descriptive
+        max_length=10,
+        choices=[
+            ('one-time', 'One-time'),
+            ('monthly', 'Monthly'),
+        ],
+        default='monthly',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)   # better to use DateTimeField
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Member"
+        verbose_name_plural = "Members"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name} ({self.member_type})"
+
+    @property
+    def is_active(self):
+        """Quick helper to check if membership is currently valid"""
+        latest_payment = self.member_payments.order_by('-expiration_date').first()
+        if not latest_payment:
+            return False
+        return latest_payment.expiration_date >= timezone.now().date()
 
 
 class MemberPayment(models.Model):
+    member = models.ForeignKey(
+        Member,
+        on_delete=models.CASCADE,
+        related_name='payments'          # better name than 'member_payments'
+    )
     date_of_payment = models.DateField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     expiration_date = models.DateField()
-    member = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='member_payments')
     is_renewal = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date_of_payment']
+        get_latest_by = 'expiration_date'
+
+    def __str__(self):
+        return f"{self.member.name} - {self.amount} - {self.expiration_date}"
 
 
 class Attendance(models.Model):

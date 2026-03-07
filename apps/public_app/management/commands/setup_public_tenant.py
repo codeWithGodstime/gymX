@@ -27,14 +27,14 @@ class Command(BaseCommand):
 
             # Check if localhost domain exists for this gym
             localhost_domain = Domain.objects.filter(
-                domain='localhost',
+                domain='gymx.local',
                 tenant=public_gym
             ).first()
 
             if not localhost_domain:
                 self.stdout.write('Creating localhost domain...')
                 localhost_domain = Domain.objects.create(
-                    domain='localhost',
+                    domain='gymx.local',
                     tenant=public_gym,
                     is_primary=True
                 )

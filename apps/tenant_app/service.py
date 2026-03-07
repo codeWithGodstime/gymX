@@ -1,4 +1,4 @@
-from .models import Activity, MemberPayment, Members, Attendance
+from .models import Activity, MemberPayment, Member, Attendance
 from django.db.models import Sum, Count
 from datetime import date
 
@@ -9,7 +9,7 @@ class DashboardMetricsService:
         """
         Count members whose payment is currently active (not expired) within optional date range.
         """
-        qs = Members.objects.filter(
+        qs = Member.objects.filter(
             member_payments__expiration_date__gte=date.today()
         ).distinct()
 
@@ -50,6 +50,7 @@ class DashboardMetricsService:
             "monthly_revenue": cls.get_monthly_revenue(start_date, end_date),
             "attendance_rate": cls.get_attendance_rate(start_date, end_date),
         }    
+
 
 class ActivityService:
     """

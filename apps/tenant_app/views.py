@@ -12,8 +12,8 @@ from django.db.models.functions import TruncMonth
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .service import DashboardMetricsService, ActivityService
 
-from .forms import MemberCreationForm
-from .models import Members, MemberPayment
+from .forms import NewMemberForm
+from .models import Member, MemberPayment
 
 
 
@@ -103,20 +103,20 @@ def member_list_partial(request):
     today = date.today()
 
     if filter_type == "active":
-        members = Members.objects.filter(member_payments__expiration_date__gte=today).distinct()
+        members = Member.objects.filter(member_payments__expiration_date__gte=today).distinct()
     elif filter_type == "expired":
-        members = Members.objects.filter(member_payments__expiration_date__lt=today).distinct()
+        members = Member.objects.filter(member_payments__expiration_date__lt=today).distinct()
     elif filter_type == "overdue":
         # Example: expired by more than 7 days
-        members = Members.objects.filter(member_payments__expiration_date__lt=today).distinct()
+        members = Member.objects.filter(member_payments__expiration_date__lt=today).distinct()
     else:
-        members = Members.objects.all()
+        members = Member.objects.all()
 
     return render(request, "partials/member_rows.html", {"members": members, "today": today})
 
 
 class MemberList(LoginRequiredMixin, ListView):
-    model = Members
+    model = Member
     template_name = 'dashboard/members_list.html'
     context_object_name = 'members'
     paginate_by = 10
@@ -134,40 +134,47 @@ class MemberList(LoginRequiredMixin, ListView):
                 member.days_left = None
         return queryset
 
+
 class NewMemberView(LoginRequiredMixin, FormView):
-    template_name = "dashboard/add_members.html"
-    form_class = MemberCreationForm
+    template_name = "dashboard/members/add_members.html"
+    form_class = NewMemberForm           # ← or NewMemberAndPaymentForm
     success_url = reverse_lazy("members_list")
 
     @transaction.atomic
     def form_valid(self, form):
-        name = form.cleaned_data['name']
-        contact = form.cleaned_data['contact']
-        member_type = form.cleaned_data['type']
-        amount = form.cleaned_data['amount']
         today = timezone.now().date()
 
-        # Create Member
-        member = Members.objects.create(
-            name=name,
-            contact=contact,
-            type=member_type
+        # Create member
+        member = Member.objects.create(
+            name=form.cleaned_data['name'],
+            contact=form.cleaned_data['contact'],
+            member_type=form.cleaned_data['member_type'],
         )
 
-        if member_type == 'one-time':
-            expiration_date = today
-        else:  # monthly
-            expiration_date = today + timedelta(days=30)
+        # Determine expiration
+        if member.member_type == 'one-time':
+            expiration = today   # or logic like today + 10 years, etc.
+        else:
+            expiration = today + timedelta(days=30)
 
+        # Create initial payment record
         MemberPayment.objects.create(
             member=member,
-            amount=amount,
+            amount=form.cleaned_data['amount'],
             date_of_payment=today,
-            expiration_date=expiration_date,
-            is_renewal=False
+            expiration_date=expiration,
+            is_renewal=False,
         )
 
+        # Optional: add activity log entries here
+        # ActivityLog.objects.create(
+        #     user=self.request.user,
+        #     action="created member",
+        #     target=member,
+        # )
+
         return super().form_valid(form)
+    
 
 class ReportsDataView(View):
     def get(self, request, *args, **kwargs):
@@ -182,7 +189,7 @@ class ReportsDataView(View):
         )
 
         new_signups_by_month = (
-            Members.objects
+            Member.objects
             .annotate(month=TruncMonth("created_at"))
             .values("month")
             .annotate(count=Count("id"))
