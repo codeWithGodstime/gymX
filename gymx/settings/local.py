@@ -29,7 +29,7 @@ CSRF_COOKIE_DOMAIN = ".gymx.local"
 SESSION_COOKIE_PATH = "/"
 CSRF_COOKIE_PATH = "/"
 
-DOMAIN_HOST = "localhost:8000"
+DOMAIN_HOST = "http://gymx.local:8000"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "mailhog"

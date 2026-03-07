@@ -46,7 +46,8 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",  # ← Requires sessions
     
-    "apps.accounts.middleware.CustomTenantMiddleware", 
+    "apps.accounts.middleware.tenant.CustomTenantMiddleware", 
+    "apps.accounts.middleware.auth_route.TenantLoginRequiredMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",

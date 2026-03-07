@@ -9,8 +9,8 @@ from .views import (
 )
 
 urlpatterns = [
-    path("accounts/logout/", TenantLogoutView.as_view(), name='logout'),
-    path("accounts/login/", TenantLoginView.as_view(), name='login'),
+    path("accounts/logout/", TenantLogoutView.as_view(), name='accounts_logout'),
+    path("accounts/login/", TenantLoginView.as_view(), name='accounts_login'),
     path("accounts/signup/", GymOwnerSignupView.as_view()),
     path("accounts/subscription/", SubscriptionView.as_view(), name='subscription'),
     path("accounts/payment/initialize/", InitializePaymentView.as_view(), name='initialize_payment'),

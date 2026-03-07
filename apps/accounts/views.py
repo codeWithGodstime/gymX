@@ -6,34 +6,68 @@ from django.contrib import messages
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.views.generic import FormView, TemplateView
-from django.contrib.auth.views import LoginView, LogoutView
+from allauth.account.views import LoginView, LogoutView
 from django.db.transaction import atomic
 
 from apps.public_app.models import Gym, Domain, SubscriptionPlan
 from apps.public_app.paystack import PaystackSubscriptionManager
 from .forms import GymOwnerSignupForm
 
+
 User = get_user_model()
 
 
 class TenantLoginView(LoginView):
-    template_name = 'account/login.html'
-    redirect_authenticated_user = True
+    template_name = "account/login.html"
+    redirect_authenticated_user = False
 
-    def get_success_url(self):
+    def form_valid(self, form):
+        # This calls the allauth login logic → sets session, logs user in
+        response = super().form_valid(form)
+
+        # Now request.user should be the real user (not AnonymousUser)
         user = self.request.user
 
-        tenant = getattr(user, 'tenant', None)
-        if tenant:
+        if user.is_authenticated and hasattr(user, 'tenant') and user.tenant:
+            tenant = user.tenant
             tenant_domain = tenant.domains.filter(is_primary=True).first()
+
             if tenant_domain:
-                return f"http://{tenant_domain.domain}/accounts/dashboard/"
-            
-        return reverse('accounts:login')
+                scheme = "http" if settings.DEBUG else "https"
+                port = ":8000" if settings.DEBUG else ""
+                # Use the path the user was trying to reach, or fallback to dashboard
+                next_path = self.request.GET.get('next') or '/accounts/dashboard/'
+                redirect_url = f"{scheme}://{tenant_domain.domain}{port}{next_path}"
+                return redirect(redirect_url)
+
+        # Fallback: no tenant → stay on public or go to some default
+        # (or let allauth's default success URL kick in)
+        return response
+
+    # def get_success_url(self):
+    #     user = self.request.user
+
+    #     if user.tenant:
+    #         tenant = user.tenant
+    #         tenant_domain = tenant.domains.filter(is_primary=True).first()
+
+    #         if tenant_domain:
+    #             if settings.DEBUG:
+    #                 return f"http://{tenant_domain.domain}:8000/accounts/dashboard/"
+    #             return f"http://{tenant_domain.domain}/accounts/dashboard/"
+
+    #     return reverse("accounts_login")
     
 
 class TenantLogoutView(LogoutView):
-    next_page = reverse_lazy('accounts:login')
+    template_name = 'account/logout.html'
+
+    def get_next_page(self):
+        next_page = super().get_next_page()
+        if next_page:
+            return next_page
+        return reverse('accounts:login')
+
 
 class GymOwnerSignupView(FormView):
     form_class = GymOwnerSignupForm

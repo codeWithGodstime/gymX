@@ -23,9 +23,10 @@ class TenantAwareAuthBackend(AuthenticationBackend):
 
     def _verify_domain_access(self, user, request):
         from apps.public_app.models import Domain
-        hostname = f"{user.tenant.schema_name}.{settings.DOMAIN_HOST}"
-        print(f"Verifying domain access for user {user.email} with hostname {hostname}")
-
+        
+        # Get the actual hostname from the request
+        hostname = request.get_host().split(':')[0].lower()
+        
         return Domain.objects.filter(
             tenant=user.tenant,
             domain=hostname
