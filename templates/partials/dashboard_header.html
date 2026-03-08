@@ -20,11 +20,20 @@
   </div>
   <div class="flex flex-1 justify-end gap-6 items-center">
     <nav class="flex items-center gap-6">
-      <a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1" href="{% url 'dashboard_overview' %}">Dashboard</a>
-      <a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors"
-        href="{% url 'members_list' %}">Members</a>
-      <a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors"
-        href="#">Revenue</a>
+      <a href="{% url 'dashboard_overview' %}"
+        class="text-sm font-medium {% if request.resolver_match.url_name == 'dashboard_overview' %}text-primary border-b-2 border-primary pb-1{% else %}text-slate-600 dark:text-slate-400 hover:text-primary{% endif %}">
+        Dashboard
+      </a>
+
+      <a href="{% url 'members_list' %}"
+        class="text-sm font-medium {% if request.resolver_match.url_name == 'members_list' %}text-primary border-b-2 border-primary pb-1{% else %}text-slate-600 dark:text-slate-400 hover:text-primary{% endif %}">
+        Members
+      </a>
+
+      <a href="#"
+        class="text-sm font-medium {% if request.resolver_match.url_name == 'revenue' %}text-primary border-b-2 border-primary pb-1{% else %}text-slate-600 dark:text-slate-400 hover:text-primary{% endif %}">
+        Revenue
+      </a>
     </nav>
     <div class="flex gap-3">
       <!-- <button
@@ -34,7 +43,7 @@
       <a href="{% url 'brand_settings' %}"
         class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
         <span class="material-symbols-outlined">settings</span>
-    </a>
+      </a>
     </div>
   </div>
 </header>
