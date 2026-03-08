@@ -81,7 +81,7 @@ class Member(models.Model):
     @property
     def is_active(self):
         """Quick helper to check if membership is currently valid"""
-        latest_payment = self.member_payments.order_by('-expiration_date').first()
+        latest_payment = self.payments.order_by('-expiration_date').first()
         if not latest_payment:
             return False
         return latest_payment.expiration_date >= timezone.now().date()

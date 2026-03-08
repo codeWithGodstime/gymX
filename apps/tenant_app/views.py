@@ -13,7 +13,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .service import DashboardMetricsService, ActivityService
 
 from .forms import NewMemberForm
-from .models import Member, MemberPayment
+from .models import Member, MemberPayment, Activity
 
 
 
@@ -103,12 +103,12 @@ def member_list_partial(request):
     today = date.today()
 
     if filter_type == "active":
-        members = Member.objects.filter(member_payments__expiration_date__gte=today).distinct()
+        members = Member.objects.filter(payments__expiration_date__gte=today).distinct()
     elif filter_type == "expired":
-        members = Member.objects.filter(member_payments__expiration_date__lt=today).distinct()
+        members = Member.objects.filter(payments__expiration_date__lt=today).distinct()
     elif filter_type == "overdue":
         # Example: expired by more than 7 days
-        members = Member.objects.filter(member_payments__expiration_date__lt=today).distinct()
+        members = Member.objects.filter(payments__expiration_date__lt=today).distinct()
     else:
         members = Member.objects.all()
 
@@ -157,6 +157,30 @@ class NewMemberView(LoginRequiredMixin, FormView):
             date_of_payment=today,
             expiration_date=expiration,
             is_renewal=False,
+        )
+
+         # Activity: member created
+        Activity.objects.create(
+            user=self.request.user,
+            activity_type=Activity.ActivityType.MEMBER_CREATED,
+            description=f"Member {member.name} was created",
+            metadata={
+                "member_id": str(member.id),
+                "member_name": member.name,
+                "member_type": member.member_type,
+            }
+        )
+
+        # Activity: payment successful
+        Activity.objects.create(
+            user=self.request.user,
+            activity_type=Activity.ActivityType.PAYMENT_SUCCESS,
+            description=f"Payment received for {member.name}",
+            metadata={
+                "member_id": str(member.id),
+                "amount": float(form.cleaned_data["amount"]),
+                "expiration_date": expiration.isoformat(),
+            }
         )
 
         return super().form_valid(form)    

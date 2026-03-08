@@ -13,11 +13,11 @@
   </td>
   <td class="px-6 py-4">
     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
-      {{ member.type|capfirst }}
+      {{ member.member_type|capfirst }}
     </span>
   </td>
   <td class="px-6 py-4">
-    {% with last_payment=member.member_payments.last %}
+    {% with last_payment=member.payments.last %}
     {% if last_payment %}
       <div class="flex flex-col">
         <span class="text-sm text-slate-700 dark:text-slate-300">{{ last_payment.date_of_payment }}</span>
@@ -29,8 +29,7 @@
     {% endwith %}
   </td>
   <td class="px-6 py-4">
-    {% with last_payment=member.member_payments.last %}
-    {% if last_payment and last_payment.expiration_date >= today %}
+    {% if member.is_active %}
       <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
         <span class="size-1.5 rounded-full bg-green-600 dark:bg-green-400"></span>
         Paid
@@ -41,7 +40,7 @@
         Expired
       </span>
     {% endif %}
-    {% endwith %}
+
   </td>
   <td class="px-6 py-4 text-right">
     <button class="text-slate-400 hover:text-primary transition-colors">
