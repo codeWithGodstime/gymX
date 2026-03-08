@@ -171,9 +171,6 @@ yarn-error.log*
 *.min.js
 *.min.css
 
-
-.env
-
 	
 GYMX.JO3.ORG
 gymx.jo3.org
