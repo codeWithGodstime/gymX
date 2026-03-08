@@ -22,7 +22,7 @@ services:
     environment:
       - POSTGRES_DB=${DB_POSTGRES_DB}
       - POSTGRES_USER=${DB_POSTGRES_USER}
-      - POSTGRES_PASSWORD=${DB_POSTGRES_PASSWORD}
+      - POSTGRES_PASSWORD=postgres
     env_file:
       - ../.env
     volumes:

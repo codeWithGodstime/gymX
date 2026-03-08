@@ -148,3 +148,5 @@ MESSAGE_TAGS = {
     'warning': 'warning',
     'error': 'danger',
 }
+
+AUTH_USER_MODEL = "accounts.User"
