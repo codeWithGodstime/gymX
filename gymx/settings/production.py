@@ -11,6 +11,9 @@ INSTALLED_APPS = SHARED_APPS + TENANT_APPS + [
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
 DATABASES = {
     "default": {
         "ENGINE": "django_tenants.postgresql_backend",
