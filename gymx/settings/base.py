@@ -110,10 +110,10 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 SITE_ID = 1
 
-LOGIN_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "dashboard_overview"
 
 # https://django-allauth.readthedocs.io/en/latest/views.html#logout-account-logout
-ACCOUNT_LOGOUT_REDIRECT_URL = "home"
+ACCOUNT_LOGOUT_REDIRECT_URL = "dashboard_overview"
 
 # https://django-allauth.readthedocs.io/en/latest/installation.html?highlight=backends
 AUTHENTICATION_BACKENDS = (

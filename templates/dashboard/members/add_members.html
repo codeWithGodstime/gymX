@@ -1,18 +1,50 @@
-{% extends "./base.html" %}
-{% load static %}
+{% extends "../base.html" %}
 {% load crispy_forms_tags %}
 
 {% block content %}
 {% include 'partials/dashboard_header.html' %}
-<div class="login_wrapper">
-    <h2>Add Members</h2>
 
-    <div class="login_content">
-        <form method="post">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button class="btn btn-success" style="width: 100%; max-width:100%;" type="submit">Add</button>
-        </form>
-    </div>
+<div class="flex flex-1">
+    {% include 'partials/dashboard_aside.html' %}
+
+    <main class="flex-1 p-6">
+        
+        <!-- Page Header -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                Add Member
+            </h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+                Create a new gym member record
+            </p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="max-w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-6">
+
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+
+                <div class="space-y-4">
+                    {{ form|crispy }}
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <button 
+                        type="submit"
+                        class="inline-flex w-full items-center justify-center px-5 py-3.5 rounded-lg
+                               bg-primary hover:bg-primary-dark text-sm
+                               text-white font-medium
+                               transition duration-200 shadow-sm">
+                        Add Member
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+    </main>
 </div>
+
 {% endblock %}

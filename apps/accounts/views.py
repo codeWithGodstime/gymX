@@ -7,6 +7,7 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from django.views.generic import FormView, TemplateView
 from allauth.account.views import LoginView, LogoutView
+from django.utils.text import slugify
 from django.db.transaction import atomic
 
 from apps.public_app.models import Gym, Domain, SubscriptionPlan
@@ -32,14 +33,23 @@ class GymOwnerSignupWizard(SessionWizardView):
         form_data = self.get_all_cleaned_data()
         print(f"[WIZARD] Form data collected: {form_data}")
 
+            # Safe schema name
+        schema_name = slugify(form_data["gym_name"]).replace("-", "")
+        print(f"[WIZARD] Generated schema name: {schema_name}")
+        
+        # clean domain name
+        domain = settings.DOMAIN_HOST.replace("http://", "").replace("https://", "").split(":")[0]  # Remove protocol and port
         # Create Gym tenant
         schema_name = form_data['gym_name'].lower().replace(" ", "")
-        tenant = Gym.objects.create(schema_name=schema_name, name=form_data['gym_name'])
+        tenant = Gym.objects.create(
+            schema_name=schema_name,
+            name=form_data['gym_name']
+        )
         print(f"[WIZARD] Gym created - ID: {tenant.id}, Name: {tenant.name}, Schema: {tenant.schema_name}")
 
         # Create Domain
         domain = Domain.objects.create(
-            domain=f"{schema_name}.{settings.DOMAIN_HOST}",
+            domain=f"{schema_name}.{domain}",
             tenant=tenant,
             is_primary=True
         )
@@ -48,7 +58,7 @@ class GymOwnerSignupWizard(SessionWizardView):
         # Create User
         user = User.objects.create_user(
             email=form_data['email'],
-            password=form_data['password1'],  # Make sure your form field matches this
+            password=form_data['password1'],
             username=schema_name,
             tenant=tenant
         )
@@ -57,9 +67,11 @@ class GymOwnerSignupWizard(SessionWizardView):
         user.is_active = True
         user.save()
 
-        # Log in
         from django.contrib.auth import login
-        login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
+        login(self.request, user, backend="django.contrib.auth.backends.ModelBackend")
+
+        return redirect("dashboard")
+
 
 class TenantLoginView(LoginView):
     template_name = "account/login.html"

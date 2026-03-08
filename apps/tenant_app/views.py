@@ -122,10 +122,10 @@ class MemberList(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = super().get_queryset().prefetch_related('member_payments')
+        queryset = super().get_queryset().prefetch_related('payments')
 
         for member in queryset:
-            latest_payment = member.member_payments.order_by('-expiration_date').first()
+            latest_payment = member.payments.order_by('-expiration_date').first()
             if latest_payment:
                 member.expiration_date = latest_payment.expiration_date
                 member.days_left = (latest_payment.expiration_date - date.today()).days
@@ -137,44 +137,29 @@ class MemberList(LoginRequiredMixin, ListView):
 
 class NewMemberView(LoginRequiredMixin, FormView):
     template_name = "dashboard/members/add_members.html"
-    form_class = NewMemberForm           # ← or NewMemberAndPaymentForm
+    form_class = NewMemberForm
     success_url = reverse_lazy("members_list")
 
     @transaction.atomic
     def form_valid(self, form):
         today = timezone.now().date()
 
-        # Create member
-        member = Member.objects.create(
-            name=form.cleaned_data['name'],
-            contact=form.cleaned_data['contact'],
-            member_type=form.cleaned_data['member_type'],
-        )
+        member = form.save()
 
-        # Determine expiration
-        if member.member_type == 'one-time':
-            expiration = today   # or logic like today + 10 years, etc.
+        if member.member_type == "one-time":
+            expiration = today
         else:
             expiration = today + timedelta(days=30)
 
-        # Create initial payment record
         MemberPayment.objects.create(
             member=member,
-            amount=form.cleaned_data['amount'],
+            amount=form.cleaned_data["amount"],
             date_of_payment=today,
             expiration_date=expiration,
             is_renewal=False,
         )
 
-        # Optional: add activity log entries here
-        # ActivityLog.objects.create(
-        #     user=self.request.user,
-        #     action="created member",
-        #     target=member,
-        # )
-
-        return super().form_valid(form)
-    
+        return super().form_valid(form)    
 
 class ReportsDataView(View):
     def get(self, request, *args, **kwargs):
