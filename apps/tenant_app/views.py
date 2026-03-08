@@ -6,8 +6,8 @@ from datetime import date, timedelta
 from django.views.generic import TemplateView, ListView, FormView, View
 from django.views.generic.edit import UpdateView
 from django_tenants.utils import tenant_context
-from django.db.models import OuterRef, Subquery
-from django.db.models import F, ExpressionWrapper, IntegerField, Value, Count, Sum, Avg, DurationField, Min, Max
+
+from django.db.models import F, ExpressionWrapper, Count, Sum, DurationField, Min, Max
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,38 +15,41 @@ from .service import DashboardMetricsService, ActivityService
 
 from .forms import NewMemberForm
 from .models import Member, MemberPayment, Activity
+from apps.utils import SubscriptionRequiredMixin
 
 
 
-class GymDashboardOveriew(LoginRequiredMixin, TemplateView):
+class GymDashboardOveriew(SubscriptionRequiredMixin, LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/gym_dashboard_overview.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
         return context
-    
-def dashboard_analytics(request):
-    filter_type = request.GET.get("filter", "month")
-    today = date.today()
 
-    # Determine start and end dates based on filter
-    if filter_type == "today":
-        start_date = end_date = today
-    elif filter_type == "month":
-        start_date = today.replace(day=1)
-        end_date = today
-    elif filter_type == "year":
-        start_date = today.replace(month=1, day=1)
-        end_date = today
-    else:
-        start_date = end_date = None  # fallback: all time
 
-    # Get metrics dynamically
-    metrics = DashboardMetricsService.get_dashboard_metrics(start_date, end_date)
+class DashboardAnalyticsView(SubscriptionRequiredMixin, LoginRequiredMixin, TemplateView):
+    template_name = "partials/dashboard_key_metrics.html"
 
-    # Optional: calculate growth vs previous period
-    def calculate_growth(metric_fn, start, end, period_delta):
+    def get_filter_dates(self):
+        filter_type = self.request.GET.get("filter", "month")
+        today = date.today()
+
+        if filter_type == "today":
+            start_date = end_date = today
+        elif filter_type == "month":
+            start_date = today.replace(day=1)
+            end_date = today
+        elif filter_type == "year":
+            start_date = today.replace(month=1, day=1)
+            end_date = today
+        else:
+            start_date = end_date = None  # fallback: all time
+
+        return start_date, end_date
+
+    def calculate_growth(self, metric_fn, start, end):
+        period_delta = timedelta(days=(end - start).days + 1)
         prev_start = start - period_delta
         prev_end = end - period_delta
         current = metric_fn(start, end)
@@ -55,68 +58,80 @@ def dashboard_analytics(request):
             return 0
         return round(((current - previous) / previous) * 100, 1)
 
-    from datetime import timedelta
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        start_date, end_date = self.get_filter_dates()
 
-    members_growth = calculate_growth(
-        DashboardMetricsService.get_active_members_count,
-        start_date, end_date,
-        timedelta(days=(end_date - start_date).days + 1)
-    )
-    revenue_growth = calculate_growth(
-        DashboardMetricsService.get_monthly_revenue,
-        start_date, end_date,
-        timedelta(days=(end_date - start_date).days + 1)
-    )
-    attendance_growth = calculate_growth(
-        DashboardMetricsService.get_attendance_rate,
-        start_date, end_date,
-        timedelta(days=(end_date - start_date).days + 1)
-    )
+        metrics = DashboardMetricsService.get_dashboard_metrics(start_date, end_date)
 
-    print("Metrics:", metrics)
-    context = {
-        "members": metrics["active_members"],  # e.g., 1248
-        "revenue": metrics["monthly_revenue"], # e.g., 3420000
-        "attendance": metrics["attendance_rate"], # e.g., 0.72 for 72%
-        "members_growth": members_growth / 100,       # 0.12 for 12%
-        "revenue_growth": revenue_growth / 100,       # 0.08 for 8%
-        "attendance_growth": attendance_growth / 100 # -0.02 for -2%
-    }
+        members_growth = self.calculate_growth(
+            DashboardMetricsService.get_active_members_count,
+            start_date, end_date
+        )
+        revenue_growth = self.calculate_growth(
+            DashboardMetricsService.get_monthly_revenue,
+            start_date, end_date
+        )
+        attendance_growth = self.calculate_growth(
+            DashboardMetricsService.get_attendance_rate,
+            start_date, end_date
+        )
 
-    return render(
-        request,
-        "partials/dashboard_key_metrics.html",
-        context
-    )
+        context.update({
+            "members": metrics["active_members"],
+            "revenue": metrics["monthly_revenue"],
+            "attendance": metrics["attendance_rate"],
+            "members_growth": members_growth / 100,
+            "revenue_growth": revenue_growth / 100,
+            "attendance_growth": attendance_growth / 100
+        })
 
-def dashboard_recent_activity(request):
-    tenant = request.user.tenant  # current tenant instance
-    with tenant_context(tenant):
-        activities = ActivityService.get_recent_activities(limit=5)
-    return render(
-        request,
-        "partials/dashboard_recent_activity.html",
-        {"activities": activities}
-    )
+        return context
+    
 
-def member_list_partial(request):
-    filter_type = request.GET.get("filter", "all")
-    today = date.today()
+class DashboardRecentActivityView(SubscriptionRequiredMixin, LoginRequiredMixin, TemplateView):
+    template_name = "partials/dashboard_recent_activity.html"
+    limit = 5  # default number of recent activities
 
-    if filter_type == "active":
-        members = Member.objects.filter(payments__expiration_date__gte=today).distinct()
-    elif filter_type == "expired":
-        members = Member.objects.filter(payments__expiration_date__lt=today).distinct()
-    elif filter_type == "overdue":
-        # Example: expired by more than 7 days
-        members = Member.objects.filter(payments__expiration_date__lt=today).distinct()
-    else:
-        members = Member.objects.all()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tenant = self.request.user.tenant  # current tenant instance
 
-    return render(request, "partials/member_rows.html", {"members": members, "today": today})
+        with tenant_context(tenant):
+            activities = ActivityService.get_recent_activities(limit=self.limit)
+
+        context["activities"] = activities
+        return context
 
 
-class MemberEditView(LoginRequiredMixin, UpdateView):
+class MemberListPartialView(SubscriptionRequiredMixin, LoginRequiredMixin, TemplateView):
+    template_name = "partials/member_rows.html"
+
+    def get_filter_type(self):
+        return self.request.GET.get("filter", "all")
+
+    def get_queryset(self):
+        filter_type = self.get_filter_type()
+        today = date.today()
+
+        if filter_type == "active":
+            return Member.objects.filter(payments__expiration_date__gte=today).distinct()
+        elif filter_type == "expired":
+            return Member.objects.filter(payments__expiration_date__lt=today).distinct()
+        elif filter_type == "overdue":
+            # Example: expired by more than 7 days
+            return Member.objects.filter(payments__expiration_date__lt=today).distinct()
+        else:
+            return Member.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["members"] = self.get_queryset()
+        context["today"] = date.today()
+        return context
+
+
+class MemberEditView(SubscriptionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = Member
     form_class = NewMemberForm
     template_name = "dashboard/members/edit_member.html"
@@ -140,7 +155,8 @@ class MemberEditView(LoginRequiredMixin, UpdateView):
 
         return super().form_valid(form)
 
-class MemberList(LoginRequiredMixin, ListView):
+
+class MemberList(SubscriptionRequiredMixin, LoginRequiredMixin, ListView):
     model = Member
     template_name = 'dashboard/members_list.html'
     context_object_name = 'members'
@@ -160,7 +176,7 @@ class MemberList(LoginRequiredMixin, ListView):
         return queryset
 
 
-class NewMemberView(LoginRequiredMixin, FormView):
+class NewMemberView(SubscriptionRequiredMixin, LoginRequiredMixin, FormView):
     template_name = "dashboard/members/add_members.html"
     form_class = NewMemberForm
     success_url = reverse_lazy("members_list")
@@ -211,7 +227,7 @@ class NewMemberView(LoginRequiredMixin, FormView):
         return super().form_valid(form)    
 
 
-class ReportsDataView(View):
+class ReportsDataView(SubscriptionRequiredMixin, LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         current_time = timezone.now()
@@ -267,9 +283,9 @@ class ReportsDataView(View):
         })
     
 
-class BrandSettingsView(LoginRequiredMixin, TemplateView):
+class BrandSettingsView(SubscriptionRequiredMixin, LoginRequiredMixin, TemplateView):
     template_name = "dashboard/brand_setting.html"
 
 
-class SettingsView(LoginRequiredMixin, TemplateView):
+class SettingsView(SubscriptionRequiredMixin, LoginRequiredMixin, TemplateView):
     template_name = "dashboard/profile_setting.html"
