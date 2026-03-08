@@ -10,13 +10,13 @@ class DashboardMetricsService:
         Count members whose payment is currently active (not expired) within optional date range.
         """
         qs = Member.objects.filter(
-            member_payments__expiration_date__gte=date.today()
+            payments__expiration_date__gte=date.today()
         ).distinct()
 
         if start_date:
-            qs = qs.filter(member_payments__date_of_payment__gte=start_date)
+            qs = qs.filter(payments__date_of_payment__gte=start_date)
         if end_date:
-            qs = qs.filter(member_payments__date_of_payment__lte=end_date)
+            qs = qs.filter(payments__date_of_payment__lte=end_date)
         
         return qs.count()
 
