@@ -3,6 +3,7 @@
 <div hx-get="{% url 'dashboard_recent_activity' %}" 
     
      hx-target="this" 
+     hx-trigger="load, every 180s"
      hx-swap="innerHTML"
      class="p-0">
     <div class="flex flex-col">
