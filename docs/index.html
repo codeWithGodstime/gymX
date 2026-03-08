@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GymX – Multi-Tenant Gym Management SaaS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+        }
+    </style>
+
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- NAVBAR -->
+
+    <header class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+            <h1 class="text-xl font-bold">GymX</h1>
+
+            <div class="flex gap-6 items-center">
+
+                <a href="#features" class="text-sm text-slate-600 hover:text-black">Features</a>
+                <a href="#architecture" class="text-sm text-slate-600 hover:text-black">Architecture</a>
+                <a href="#download" class="text-sm text-slate-600 hover:text-black">Download</a>
+
+                <a href="https://github.com/codewithgodstime/gymx"
+                    class="bg-black text-white px-4 py-2 rounded-lg text-sm">
+                    GitHub
+                </a>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+
+    <section class="py-24">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+
+            <h1 class="text-5xl font-extrabold leading-tight mb-6">
+                GymX
+            </h1>
+
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto mb-10">
+                A multi-tenant SaaS gym management platform built with
+                <strong>Django</strong> and schema-based tenancy.
+                Designed for gym owners to manage members, subscriptions,
+                analytics and custom dashboards on a shared infrastructure.
+            </p>
+
+            <div class="flex justify-center gap-4">
+
+                <a href="YOUR_DEMO_LINK" class="bg-black text-white px-6 py-3 rounded-lg font-medium">
+                    🚀 Live Demo
+                </a>
+
+                <a href="https://github.com/codewithgodstime/gymx/releases"
+                    class="border px-6 py-3 rounded-lg font-medium">
+                    📦 Download Release
+                </a>
+
+                <a href="https://github.com/codewithgodstime/gymx" class="border px-6 py-3 rounded-lg font-medium">
+                    💻 Source Code
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+
+    <section id="features" class="py-20 bg-white border-t">
+        <div class="max-w-7xl mx-auto px-6">
+
+            <h2 class="text-3xl font-bold text-center mb-14">
+                Key Features
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-10">
+
+                <div class="bg-slate-50 p-6 rounded-xl">
+                    <h3 class="font-semibold mb-2">Multi-Tenant Architecture</h3>
+                    <p class="text-sm text-slate-600">
+                        Each gym runs in its own isolated database schema with secure
+                        tenant separation and automatic subdomain routing.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl">
+                    <h3 class="font-semibold mb-2">Gym Owner Dashboard</h3>
+                    <p class="text-sm text-slate-600">
+                        Manage gym members, track payments, monitor subscriptions
+                        and view analytics from a centralized dashboard.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl">
+                    <h3 class="font-semibold mb-2">Subscription Billing</h3>
+                    <p class="text-sm text-slate-600">
+                        Integrated payment subscription system using Paystack
+                        with trial periods, monthly and yearly plans.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl">
+                    <h3 class="font-semibold mb-2">Tenant Branding</h3>
+                    <p class="text-sm text-slate-600">
+                        Each gym can customize their dashboard theme and colors
+                        from the settings panel.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl">
+                    <h3 class="font-semibold mb-2">Member Management</h3>
+                    <p class="text-sm text-slate-600">
+                        Register members, track memberships, and manage gym
+                        attendance efficiently.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl">
+                    <h3 class="font-semibold mb-2">Analytics Dashboard</h3>
+                    <p class="text-sm text-slate-600">
+                        Monitor revenue, active members, expired subscriptions
+                        and gym activity metrics.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+
+    <section id="architecture" class="py-20">
+        <div class="max-w-7xl mx-auto px-6">
+
+            <h2 class="text-3xl font-bold text-center mb-14">
+                Architecture
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+
+                <div>
+
+                    <p class="text-slate-600 mb-4">
+                        GymX is built using schema-based multi-tenancy where each
+                        gym operates on its own isolated schema while sharing the same
+                        application code.
+                    </p>
+
+                    <p class="text-slate-600 mb-4">
+                        When a new gym signs up, the system automatically creates:
+                    </p>
+
+                    <ul class="list-disc pl-5 text-slate-600 space-y-1">
+                        <li>A new tenant record</li>
+                        <li>A dedicated database schema</li>
+                        <li>A subdomain for the gym</li>
+                    </ul>
+
+                </div>
+
+                <div class="bg-white border rounded-xl p-6">
+
+                    <h4 class="font-semibold mb-3">Tech Stack</h4>
+
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li>Django</li>
+                        <li>django-tenants</li>
+                        <li>PostgreSQL</li>
+                        <li>HTMX</li>
+                        <li>TailwindCSS</li>
+                        <li>Paystack</li>
+                        <li>Docker</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- DEMO -->
+
+    <section class="py-20 bg-white border-t">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+
+            <h2 class="text-3xl font-bold mb-6">
+                Live Demo
+            </h2>
+
+            <p class="text-slate-600 mb-6">
+                Explore the platform using demo credentials.
+            </p>
+
+            <div class="bg-slate-50 border rounded-xl p-6 inline-block text-left">
+
+                <p><strong>Email:</strong> demo@gymx.app</p>
+                <p><strong>Password:</strong> demo123</p>
+
+            </div>
+
+            <div class="mt-8">
+
+                <a href="YOUR_DEMO_LINK" class="bg-black text-white px-6 py-3 rounded-lg">
+                    Launch Demo
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- DOWNLOAD -->
+
+    <section id="download" class="py-20">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+
+            <h2 class="text-3xl font-bold mb-6">
+                Run the Project
+            </h2>
+
+            <p class="text-slate-600 mb-10">
+                Download the latest version or run using Docker.
+            </p>
+
+            <div class="bg-white border rounded-xl p-8 text-left">
+
+                <pre class="text-sm bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto">
+docker pull ghcr.io/codewithgodstime/gymx:latest
+docker run -p 8000:8000 gymx
+</pre>
+
+            </div>
+
+            <div class="mt-8">
+
+                <a href="https://github.com/codewithgodstime/gymx/releases"
+                    class="border px-6 py-3 rounded-lg font-medium">
+                    Download Release
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+
+    <footer class="border-t py-10 mt-10">
+
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+
+            <p class="text-sm text-slate-500">
+                Built by Godstime
+            </p>
+
+            <div class="flex gap-6 text-sm">
+
+                <a href="https://github.com/codewithgodstime/gymx">GitHub</a>
+                <a href="YOUR_DEMO_LINK">Live Demo</a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+</body>
+
+</html>
