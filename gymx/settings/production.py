@@ -87,7 +87,7 @@ LOGGING = {
     #         "filename": BASE_DIR / "logs/django.log",
     #         "formatter": "verbose",
     #     },
-    # },
+    },
 
     "loggers": {
         "django": {
