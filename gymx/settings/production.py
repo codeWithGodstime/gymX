@@ -1,9 +1,12 @@
 from .base import *
 
 DEBUG = env.bool("DEBUG", False)
+SECRET_KEY = env("SECRET_KEY")
 
 INSTALLED_APPS = SHARED_APPS + TENANT_APPS + [
-    "whitenoise.runserver_nostatic"
+    "whitenoise.runserver_nostatic",
+    "crispy_forms",
+    "crispy_bootstrap5",
 ]
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
