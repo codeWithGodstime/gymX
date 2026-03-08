@@ -1,29 +1,62 @@
-docker run --name gym-postgress -e POSTGRES_USER=myuser  -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydatabase  -p 5432:5432 -v pgdata:/var/lib/postgresql/data -d postgres
+# GymManage
 
-🔁 Renewal Rate Trend
-Chart Type: Line or Bar
+A saas web application to manage gym operations, memberships, subscriptions, and payments. Built with Django and Tailwind CSS for a clean, responsive UI.
 
-Data: Renewals per month compared to new signups
 
-Purpose: Track how well you're retaining customers
+## Screenshots
 
-📆 Membership Duration Analysis
-Chart Type: Histogram
+![Landing Screenshot](./screenshots/landing.png)
+![Dashboard Screenshot](./screenshots/overview.png)
+![Register Screenshot](./screenshots/register.png)
 
-Data: How long users stay subscribed (in months)
 
-Purpose: Understand retention and long-term value
+## Features
+- Member management (active, expired, overdue tracking)
+- Subscription and billing management with free trial support
+- Gym owner signup and dashboard
+- Multi-tenant branding support
+- Real-time filtering and search
 
-⏱️ Peak Attendance Time (Optional with check-in data)
-Chart Type: Line or Heatmap
+Tech Stack
+- Backend: Django
+- Frontend: Tailwind CSS, HTMX
+- Database: PostgreSQL (or SQLite for local dev)
+- Deployment: Docker, GitHub Container Registry
 
-Data: Member check-in times by hour/day
+## Getting Started
+Prerequisites
+- Docker & Docker Compose
+- Python 3.11+
 
-Purpose: Optimize staffing and energy usage
+# Local Development
 
-📈 Monthly Revenue Chart
-Chart Type: Line Chart or Area Chart
+- Clone the repository and rename to gymx:
+```bash
+git clone https://github.com/<your-username>/gym-management.git gymx
+cd gymx
+```
 
-Data: Total revenue per month
+- Build and run the Docker container:
 
-Purpose: Track growth, seasonality, and identify drops
+```
+docker-compose -f docker-compose-local.yml up --build
+```
+- Create a localhost alias (gymx.local) for any domain you want to use
+
+```
+echo 127.0.0.1 gymx.local >> /etc/hosts
+```
+- Access the app:
+```
+http://gymx.local:8000
+```
+
+- Environment Variables
+
+Create a .env file with the following variables:
+```
+DJANGO_SECRET_KEY=<your-secret-key>
+DATABASE_URL=postgres://user:password@db:5432/gymdb
+DEBUG=True
+```
+               
