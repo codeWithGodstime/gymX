@@ -12,7 +12,7 @@ venv/
 # git
 .git
 .gitignore
-
+screenshots
 # docker
 docker-compose.yml
 
@@ -51,3 +51,5 @@ media/
 
 # local db
 db.sqlite3
+
+Makefile

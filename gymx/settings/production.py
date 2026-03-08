@@ -2,8 +2,6 @@ from .base import *
 
 DEBUG = False
 
-
-
 INSTALLED_APPS = SHARED_APPS + TENANT_APPS + [
     "whitenoise.runserver_nostatic"
 ]
@@ -28,12 +26,16 @@ DATABASES = {
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 # SMTP settings
-EMAIL_HOST = env("EMAIL_HOST")
-EMAIL_PORT = env.int("EMAIL_PORT", 587)
-EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", True)
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+# EMAIL_HOST = env("EMAIL_HOST")
+# EMAIL_PORT = env.int("EMAIL_PORT", 587)
+# EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", True)
+# EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
+SESSION_COOKIE_DOMAIN = ".gymx.jo3.org"
+CSRF_COOKIE_DOMAIN = ".gymx.jo3.org"
+SESSION_COOKIE_PATH = "/"
+CSRF_COOKIE_PATH = "/"
 
 # static files settings for production
 
@@ -43,15 +45,15 @@ STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-# https://whitenoise.readthedocs.io/en/latest/django.html
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+# # https://whitenoise.readthedocs.io/en/latest/django.html
+# STORAGES = {
+#     "default": {
+#         "BACKEND": "django.core.files.storage.FileSystemStorage",
+#     },
+#     "staticfiles": {
+#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+#     },
+# }
 
 # media files settings for production
 MEDIA_URL = "/media/"

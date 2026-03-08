@@ -170,3 +170,11 @@ yarn-error.log*
 # Compiled assets
 *.min.js
 *.min.css
+
+
+.env
+
+	
+GYMX.JO3.ORG
+gymx.jo3.org
+
