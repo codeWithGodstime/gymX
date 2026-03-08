@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = False
+DEBUG = env.bool("DEBUG", False)
 
 INSTALLED_APPS = SHARED_APPS + TENANT_APPS + [
     "whitenoise.runserver_nostatic"
