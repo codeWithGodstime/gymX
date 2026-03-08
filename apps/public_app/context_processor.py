@@ -45,3 +45,15 @@ def global_utils(request):
         "number": number,
         "percentage": percentage,
     }
+
+from apps.tenant_app.models import Gymbranding
+
+def gym_branding(request):
+    branding = None
+
+    if request.tenant:
+        branding = Gymbranding.objects.filter(gym=request.tenant).first()
+
+    return {
+        "branding": branding
+    }

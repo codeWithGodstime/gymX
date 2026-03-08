@@ -1,0 +1,184 @@
+{% extends 'dashboard/setting_base.html' %}
+{% block scontent %}
+<div class="flex-1 overflow-y-auto p-8 lg:p-12">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-end justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">Gym Branding</h2>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2">Customize how your brand appears to members
+                        across the portal and emails.</p>
+                </div>
+                <button
+                    class="bg-primary hover:bg-primary/90 text-white font-bold py-2.5 px-6 rounded-lg transition-all shadow-md">
+                    Save Changes
+                </button>
+            </div>
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                <!-- Customization Form -->
+                <div class="xl:col-span-2 space-y-8">
+                    <!-- Logo Upload -->
+                    <section
+                        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">image</span>
+                            Identity &amp; Logo
+                        </h3>
+                        <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                            <div
+                                class="size-32 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 relative overflow-hidden group">
+                                <div class="bg-center bg-no-repeat w-full h-full bg-contain p-4"
+                                    data-alt="Current gym logo placeholder"
+                                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAOKiawf_GBBshqnD_BuWjuLZOLNZqSNchomoplb3GUdQzCFm6C5pYzHSXVEQCNtgFx9q0eBO48H_aqo6sE6LgGzNDynAokd6-CezFkNsUJViaVT3L0IAFe5tRhqXlg4xgME9dILGJwZ2shSAv7dtl249s4h0LSytDb0XhtChxpvUFSU1wjU5IPqkrVZekEFvJyXMUK9cCE2JN6UamAYVDB3vpWtGV4oRF4IRL3u3CuRiXCKqEyd7i19V0hyxz1UV7adnNRkuWBLy0");'>
+                                </div>
+                                <div
+                                    class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    <span class="material-symbols-outlined text-white">upload</span>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-slate-900 dark:text-slate-100 font-semibold mb-1">Upload Gym Logo</p>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Recommended size: 512x512px.
+                                    Supported formats: PNG, SVG, or JPG.</p>
+                                <div class="flex gap-3">
+                                    <button
+                                        class="text-sm bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 py-2 px-4 rounded-lg font-medium">Upload
+                                        new</button>
+                                    <button class="text-sm text-red-500 font-medium hover:underline">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Brand Colors -->
+                    <section
+                        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">colorize</span>
+                            Color Palette
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-3">
+                                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Primary
+                                    Brand Color</label>
+                                <div class="flex items-center gap-3">
+                                    <div class="size-10 rounded-lg bg-primary shadow-inner border border-white/20">
+                                    </div>
+                                    <input
+                                        class="flex-1 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm font-mono px-3 py-2 uppercase"
+                                        type="text" value="#13C8EC" />
+                                </div>
+                                <p class="text-xs text-slate-500">Used for buttons, links, and active states.</p>
+                            </div>
+                            <div class="space-y-3">
+                                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Secondary
+                                    Accent</label>
+                                <div class="flex items-center gap-3">
+                                    <div class="size-10 rounded-lg bg-slate-800 shadow-inner border border-white/20">
+                                    </div>
+                                    <input
+                                        class="flex-1 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm font-mono px-3 py-2 uppercase"
+                                        type="text" value="#1E293B" />
+                                </div>
+                                <p class="text-xs text-slate-500">Used for secondary components and highlights.</p>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Notifications -->
+                    <section
+                        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">mail</span>
+                            Notification Preferences
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between py-2">
+                                <div>
+                                    <p class="font-semibold text-slate-900 dark:text-slate-100">Welcome Email</p>
+                                    <p class="text-sm text-slate-500">Send an automated brand-themed welcome email to
+                                        new members.</p>
+                                </div>
+                                <div class="relative inline-flex items-center cursor-pointer">
+                                    <input checked="" class="sr-only peer" type="checkbox" />
+                                    <div
+                                        class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center justify-between py-2 border-t border-slate-100 dark:border-slate-800">
+                                <div>
+                                    <p class="font-semibold text-slate-900 dark:text-slate-100">Billing Alerts</p>
+                                    <p class="text-sm text-slate-500">Notify members about upcoming subscription
+                                        renewals.</p>
+                                </div>
+                                <div class="relative inline-flex items-center cursor-pointer">
+                                    <input checked="" class="sr-only peer" type="checkbox" />
+                                    <div
+                                        class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <!-- Branding Preview -->
+                <div class="space-y-6">
+                    <h3 class="text-lg font-bold flex items-center gap-2 px-2">
+                        <span class="material-symbols-outlined text-primary">visibility</span>
+                        Member Portal Preview
+                    </h3>
+                    <div
+                        class="sticky top-8 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl bg-slate-50 dark:bg-slate-950">
+                        <div
+                            class="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 p-4 flex items-center justify-between">
+                            <div class="h-6 w-24 bg-primary/20 rounded"></div>
+                            <div class="size-6 rounded-full bg-slate-100 dark:bg-slate-800"></div>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div
+                                class="h-32 w-full rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center p-4">
+                                <div class="text-center">
+                                    <div
+                                        class="size-12 bg-white rounded-lg mx-auto mb-2 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-primary">fitness_center</span>
+                                    </div>
+                                    <div class="h-3 w-20 bg-white/50 rounded mx-auto"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="h-4 w-3/4 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                                <div class="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded"></div>
+                                <div class="h-3 w-5/6 bg-slate-100 dark:bg-slate-900 rounded"></div>
+                            </div>
+                            <div class="pt-4">
+                                <button
+                                    class="w-full bg-primary text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-primary/20">
+                                    Book Training Session
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div
+                                    class="h-20 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800">
+                                </div>
+                                <div
+                                    class="h-20 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-100 dark:bg-slate-900/50 p-4 text-[10px] text-center text-slate-400">
+                            This is a preview of the member experience.
+                        </div>
+                    </div>
+                    <div class="p-4 bg-primary/5 rounded-xl border border-primary/20">
+                        <div class="flex gap-3">
+                            <span class="material-symbols-outlined text-primary">info</span>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Changes to branding may take up to 5 minutes to propagate across all global edge
+                                locations.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

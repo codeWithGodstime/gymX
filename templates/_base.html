@@ -19,29 +19,35 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
     rel="stylesheet" />
   <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "primary": "#13c8ec",
-            "background-light": "#f6f8f8",
-            "background-dark": "#101f22",
-          },
-          fontFamily: {
-            "display": ["Inter", "sans-serif"]
-          },
-          borderRadius: {
-            "DEFAULT": "0.25rem",
-            "lg": "0.5rem",
-            "xl": "0.75rem",
-            "full": "9999px"
-          },
+  const gymBranding = {
+    primary: "{{ gym.primary_color|default:'#13c8ec' }}",
+    backgroundLight: "{{ gym.background_light|default:'#f6f8f8' }}",
+    backgroundDark: "{{ gym.background_dark|default:'#101f22' }}",
+  };
+
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": gymBranding.primary,
+          "background-light": gymBranding.backgroundLight,
+          "background-dark": gymBranding.backgroundDark,
+        },
+        fontFamily: {
+          "display": ["Inter", "sans-serif"]
+        },
+        borderRadius: {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
         },
       },
-    }
-  </script>
-
+    },
+  }
+  
+</script>
   <style>
     :root {
       /* Brand Colors */

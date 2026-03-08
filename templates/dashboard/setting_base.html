@@ -1,0 +1,15 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+{% include 'partials/dashboard_header.html' %}
+
+<div class="flex flex-1">
+    <!-- Sidebar Navigation -->
+    {% include 'partials/dashboard_aside.html' %}
+    <!-- Content Area -->
+    <main class="flex-1 p-6 overflow-auto">
+        {% block scontent %}{% endblock scontent %}
+    </main>
+</div>
+{% endblock content %}

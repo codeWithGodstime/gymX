@@ -1,0 +1,70 @@
+{% extends 'dashboard/setting_base.html' %}
+
+{% block title %}Profile Settings - FitPulse Pro{% endblock title %}
+
+{% block scontent %}
+<main class="flex-1 overflow-y-auto">
+    <div class="max-w-4xl mx-auto px-8 py-12">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <div>
+                <h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">Profile Settings</h2>
+                <p class="text-slate-500 mt-2">Update your personal information and how you appear to your team.</p>
+            </div>
+            <div class="flex gap-3">
+                <button
+                    class="px-5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                    Cancel
+                </button>
+                <button
+                    class="px-5 py-2.5 rounded-lg bg-primary text-white font-semibold text-sm shadow-lg shadow-primary/20 hover:brightness-105 transition-all">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+        
+        <!-- Form Details -->
+        <div class="space-y-8">
+            <section>
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">badge</span>
+                    Personal Details
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300">First Name</label>
+                        <input
+                            class="w-full rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark focus:border-primary focus:ring-primary h-12 px-4 transition-all"
+                            type="text" value="Alex" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Last Name</label>
+                        <input
+                            class="w-full rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark focus:border-primary focus:ring-primary h-12 px-4 transition-all"
+                            type="text" value="Johnson" />
+                    </div>
+                    <div class="space-y-2 md:col-span-2">
+                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
+                        <input
+                            class="w-full rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark focus:border-primary focus:ring-primary h-12 px-4 transition-all"
+                            type="email" value="alex@stronghold.gym" />
+                    </div>
+                    <div class="space-y-2 md:col-span-2">
+                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Bio</label>
+                        <textarea
+                            class="w-full rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark focus:border-primary focus:ring-primary px-4 py-3 transition-all"
+                            placeholder="Tell us a bit about your background in fitness..." rows="3"></textarea>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+        <div class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+            <button
+                class="px-8 py-3 rounded-lg bg-primary text-white font-bold text-base shadow-lg shadow-primary/25 hover:scale-[1.02] transition-all">
+                Update Profile
+            </button>
+        </div>
+    </div>
+</main>
+{% endblock %}

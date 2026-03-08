@@ -1,43 +1,53 @@
-
-    <!-- Left Sidebar: Quick Actions -->
-    <aside
-        class="w-72 bg-white dark:bg-background-dark border-r border-slate-200 dark:border-slate-800 p-6 flex flex-col justify-between hidden lg:flex">
-        <div class="flex flex-col gap-8">
-            <div class="flex flex-col gap-1">
-                <h1 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Titan Fitness</h1>
-                <p class="text-slate-500 text-sm">Downtown Branch</p>
+<!-- Left Sidebar: Quick Actions -->
+<aside
+    class="w-72 bg-white dark:bg-background-dark border-r border-slate-200 dark:border-slate-800 p-6 flex flex-col justify-between hidden lg:flex">
+    <div class="flex flex-col gap-8">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Titan Fitness</h1>
+            <p class="text-slate-500 text-sm">Downtown Branch</p>
+        </div>
+        <nav class="flex flex-col gap-2">
+            <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary">
+                <span class="material-symbols-outlined">dashboard</span>
+                <p class="text-sm font-semibold">Overview</p>
             </div>
-            <nav class="flex flex-col gap-2">
-                <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary">
-                    <span class="material-symbols-outlined">dashboard</span>
-                    <p class="text-sm font-semibold">Overview</p>
-                </div>
-                <a href="{% url 'members_list' %}"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer">
-                    <span class="material-symbols-outlined text-slate-500">group</span>
-                    <p class="text-sm font-medium">Member Directory</p>
+            <a href="{% url 'members_list' %}"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <span class="material-symbols-outlined text-slate-500">group</span>
+                <p class="text-sm font-medium">Member Directory</p>
             </a>
-                
-            </nav>
-            <div class="flex flex-col gap-4">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest px-3">Quick Actions</p>
-                <a href="{% url 'members_add' %}"
-                    class="flex items-center gap-2 w-full py-2.5 px-4 bg-primary text-slate-900 font-bold rounded-lg hover:opacity-90 transition-opacity">
-                    <span class="material-symbols-outlined text-xl">person_add</span>
-                    <span class="text-sm">New Member</span>
-                </a>
-                <button
-                    class="flex items-center gap-2 w-full py-2.5 px-4 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold rounded-lg hover:opacity-90 transition-opacity">
-                    <span class="material-symbols-outlined text-xl">add_card</span>
-                    <span class="text-sm">Log Payment</span>
-                </button>
-            </div>
+
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                href="{% url 'profile_settings' %}">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-semibold">General</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary transition-colors"
+                href="{% url 'brand_settings' %}">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">palette</span>
+                <span class="text-sm font-bold">Branding</span>
+            </a>
+
+        </nav>
+        <div class="flex flex-col gap-4">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest px-3">Quick Actions</p>
+            <a href="{% url 'members_add' %}"
+                class="flex items-center gap-2 w-full py-2.5 px-4 bg-primary text-slate-900 font-bold rounded-lg hover:opacity-90 transition-opacity">
+                <span class="material-symbols-outlined text-xl">person_add</span>
+                <span class="text-sm">New Member</span>
+            </a>
+            <button
+                class="flex items-center gap-2 w-full py-2.5 px-4 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold rounded-lg hover:opacity-90 transition-opacity">
+                <span class="material-symbols-outlined text-xl">add_card</span>
+                <span class="text-sm">Log Payment</span>
+            </button>
         </div>
-        <div class="bg-primary/5 p-4 rounded-xl border border-primary/10">
-            <p class="text-xs font-semibold text-primary mb-1">PRO PLAN</p>
-            <p class="text-xs text-slate-600 dark:text-slate-400 mb-3">Next billing cycle starts in 12 days.</p>
-            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                <div class="bg-primary h-full w-2/3"></div>
-            </div>
+    </div>
+    <div class="bg-primary/5 p-4 rounded-xl border border-primary/10">
+        <p class="text-xs font-semibold text-primary mb-1">PRO PLAN</p>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mb-3">Next billing cycle starts in 12 days.</p>
+        <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-primary h-full w-2/3"></div>
         </div>
-    </aside>
+    </div>
+</aside>

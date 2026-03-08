@@ -109,3 +109,23 @@ class MemberPayment(models.Model):
 
 class Attendance(models.Model):
     pass
+
+
+class Gymbranding(models.Model):
+    gym = models.OneToOneField("public_app.Gym", on_delete=models.CASCADE)
+
+    primary_color = models.CharField(max_length=20, default="#2563eb")
+    secondary_color = models.CharField(max_length=20, default="#0f172a")
+    accent_color = models.CharField(max_length=20, default="#22c55e")
+
+    theme = models.CharField(
+        max_length=20,
+        choices=[
+            ("light", "Light"),
+            ("dark", "Dark"),
+            ("system", "System")
+        ],
+        default="light"
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)

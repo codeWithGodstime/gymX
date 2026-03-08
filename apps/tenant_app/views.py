@@ -210,6 +210,7 @@ class NewMemberView(LoginRequiredMixin, FormView):
 
         return super().form_valid(form)    
 
+
 class ReportsDataView(View):
     def get(self, request, *args, **kwargs):
 
@@ -264,3 +265,11 @@ class ReportsDataView(View):
             "membership_duration": duration_data,
             "monthly_revenue": list(monthly_revenue),
         })
+    
+
+class BrandSettingsView(LoginRequiredMixin, TemplateView):
+    template_name = "dashboard/brand_setting.html"
+
+
+class SettingsView(LoginRequiredMixin, TemplateView):
+    template_name = "dashboard/profile_setting.html"
