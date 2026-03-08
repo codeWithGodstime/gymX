@@ -15,10 +15,7 @@ DATABASES = {
         "USER": env("DB_POSTGRES_USER"),
         "PASSWORD": env("DB_POSTGRES_PASSWORD"),
         "HOST": env("DB_POSTGRES_HOST"),
-        "PORT": 5432,
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
+        "PORT": 5432
     }
 }
 
