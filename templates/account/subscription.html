@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load formatters %}
 
 {% block title %}Choose Your Plan - GymX{% endblock %}
 
@@ -23,29 +24,20 @@
                 </div>
 
                 <div class="plan-price">
-                    <span class="currency">$</span>
-                    <span class="amount">{{ plan.amount|floatformat:0 }}</span>
+                    <!-- <span class="currency">$</span> -->
+                    <span class="amount">{{ plan.amount|naira }}</span>
                     <span class="period">/{{ plan.get_interval_display|lower }}</span>
                 </div>
 
                 <ul class="plan-features">
-                    {% if plan.name|lower == 'basic' %}
+                    
                         <li><i class="fas fa-check"></i> Up to 100 members</li>
                         <li><i class="fas fa-check"></i> Attendance tracking</li>
                         <li><i class="fas fa-check"></i> Basic membership management</li>
                         <li><i class="fas fa-check"></i> Monthly reports</li>
                         <li><i class="fas fa-check"></i> Email support</li>
                         <li><i class="fas fa-check"></i> Mobile app access</li>
-                    {% else %}
-                        <li><i class="fas fa-check"></i> Unlimited members</li>
-                        <li><i class="fas fa-check"></i> Advanced attendance analytics</li>
-                        <li><i class="fas fa-check"></i> Complete membership management</li>
-                        <li><i class="fas fa-check"></i> Subscription & billing automation</li>
-                        <li><i class="fas fa-check"></i> Advanced reports & insights</li>
-                        <li><i class="fas fa-check"></i> Priority 24/7 support</li>
-                        <li><i class="fas fa-check"></i> Custom integrations</li>
-                        <li><i class="fas fa-check"></i> Staff management</li>
-                    {% endif %}
+                    
                 </ul>
 
                 <form method="post" action="{% url 'initialize_payment' %}">
@@ -59,7 +51,7 @@
             {% endfor %}
         </div>
 
-        <!-- Info Section -->
+        <!-- Info Section
         <div class="subscription-info">
             <p class="info-text">
                 <i class="fas fa-info-circle"></i>
@@ -68,7 +60,7 @@
             <p class="skip-text">
                 Want to explore first? <a href="/" class="skip-link">Continue to dashboard</a>
             </p>
-        </div>
+        </div> -->
     </div>
 </div>
 

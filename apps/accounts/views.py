@@ -9,11 +9,14 @@ from django.views.generic import FormView, TemplateView
 from allauth.account.views import LoginView, LogoutView
 from django.utils.text import slugify
 from django.db.transaction import atomic
+from allauth.account.utils import perform_login
 
 from apps.public_app.models import Gym, Domain, SubscriptionPlan
 from apps.public_app.paystack import PaystackSubscriptionManager
 from .forms import GymOwnerForm, UserSignupForm
 from formtools.wizard.views import SessionWizardView
+
+from apps.public_app.models import Subscription
 
 User = get_user_model()
 
@@ -40,7 +43,7 @@ class GymOwnerSignupWizard(SessionWizardView):
         # clean domain name
         domain = settings.DOMAIN_HOST.replace("http://", "").replace("https://", "").split(":")[0]  # Remove protocol and port
         # Create Gym tenant
-        schema_name = form_data['gym_name'].lower().replace(" ", "")
+        schema_name = form_data['custom_subdomain'].lower().replace(" ", "")
         tenant = Gym.objects.create(
             schema_name=schema_name,
             name=form_data['gym_name']
@@ -66,11 +69,21 @@ class GymOwnerSignupWizard(SessionWizardView):
 
         user.is_active = True
         user.save()
+        
+        # create free trial subscription
+        Subscription.objects.create(
+            tenant=tenant,
+            plan=None,
+            status="active",
+        )
 
-        from django.contrib.auth import login
-        login(self.request, user, backend="django.contrib.auth.backends.ModelBackend")
+        from allauth.account.utils import perform_login
+        perform_login(self.request, user, email_verification='optional')
 
-        return redirect("dashboard")
+        scheme = "http" if settings.DEBUG else "https"
+        port = ":8000" if settings.DEBUG else ""
+        redirect_url = f"{scheme}://{domain.domain}{port}/accounts/overview/"
+        return redirect(redirect_url)
 
 
 class TenantLoginView(LoginView):
@@ -92,7 +105,7 @@ class TenantLoginView(LoginView):
                 scheme = "http" if settings.DEBUG else "https"
                 port = ":8000" if settings.DEBUG else ""
                 # Use the path the user was trying to reach, or fallback to dashboard
-                next_path = self.request.GET.get('next') or '/accounts/dashboard/'
+                next_path = self.request.GET.get('next') or '/accounts/overview/'
                 redirect_url = f"{scheme}://{tenant_domain.domain}{port}{next_path}"
                 return redirect(redirect_url)
             
@@ -114,12 +127,6 @@ class SubscriptionView(TemplateView):
     
     def get(self, request, *args, **kwargs):
         # Check if user has signed up (session data exists)
-        if 'new_user_id' not in request.session or 'new_tenant_id' not in request.session:
-            print(f"[VIEW] SubscriptionView - Session missing, redirecting to signup")
-            messages.error(request, 'Please sign up first to choose a plan.')
-            return redirect('account_signup')
-        
-        print(f"[VIEW] SubscriptionView - Displaying plans for User ID: {request.session.get('new_user_id')}, Tenant ID: {request.session.get('new_tenant_id')}")
         
         return super().get(request, *args, **kwargs)
     

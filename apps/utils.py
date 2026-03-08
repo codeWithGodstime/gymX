@@ -4,22 +4,10 @@ from django.utils.decorators import method_decorator
 
 
 class SubscriptionRequiredMixin:
-    """
-    Mixin to restrict access to views based on active subscription.
-    Assumes each tenant has a `subscription_active` boolean field.
-    """
-
-    subscription_required = True  # can be toggled per view
-
     def dispatch(self, request, *args, **kwargs):
-        # Skip check if not required
-        if not getattr(self, "subscription_required", True):
-            return super().dispatch(request, *args, **kwargs)
-
-        # Check subscription on the current tenant
-        tenant = getattr(request, "tenant", None)
-        if not tenant or not getattr(tenant, "subscription_active", False):
-            pass
-            # return redirect(reverse("subscription"))  # your subscription page
-
+        print("Checking subscription status for tenant:", request.tenant)
+        subscription = request.tenant.subscriptions.order_by('-start_date').first()
+        print("Latest subscription found:", subscription, "Is active or trial?", subscription.is_active_or_trial if subscription else "No subscription")
+        if not subscription or not subscription.is_active_or_trial:
+            return redirect('subscription')  # Page to pick a plan
         return super().dispatch(request, *args, **kwargs)
