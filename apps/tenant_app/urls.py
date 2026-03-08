@@ -8,5 +8,6 @@ urlpatterns = [
     path("members/partial/", views.member_list_partial, name="member_list_partial"),
     path('dashboard/members/', views.MemberList.as_view(), name='members_list'),
     path('dashboard/members/add/', views.NewMemberView.as_view(), name='members_add'),
+    path('dashboard/members/<str:pk>/edit/', views.MemberEditView.as_view(), name='member_edit'),
     path("dashboard/reports/", views.ReportsDataView.as_view(), name="reports_data"),
 ]

@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from datetime import date, timedelta
 from django.views.generic import TemplateView, ListView, FormView, View
+from django.views.generic.edit import UpdateView
 from django_tenants.utils import tenant_context
 from django.db.models import OuterRef, Subquery
 from django.db.models import F, ExpressionWrapper, IntegerField, Value, Count, Sum, Avg, DurationField, Min, Max
@@ -114,6 +115,30 @@ def member_list_partial(request):
 
     return render(request, "partials/member_rows.html", {"members": members, "today": today})
 
+
+class MemberEditView(LoginRequiredMixin, UpdateView):
+    model = Member
+    form_class = NewMemberForm
+    template_name = "dashboard/members/edit_member.html"
+    success_url = reverse_lazy("members_list")
+    context_object_name = "member"
+
+    @transaction.atomic
+    def form_valid(self, form):
+        member = form.save()
+
+        Activity.objects.create(
+            user=self.request.user,
+            activity_type=Activity.ActivityType.MEMBER_UPDATED,
+            description=f"Member {member.name} was updated",
+            metadata={
+                "member_id": str(member.id),
+                "member_name": member.name,
+                "member_type": member.member_type,
+            }
+        )
+
+        return super().form_valid(form)
 
 class MemberList(LoginRequiredMixin, ListView):
     model = Member

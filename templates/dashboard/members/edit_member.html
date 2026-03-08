@@ -1,0 +1,59 @@
+{% extends "../base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% include "partials/dashboard_header.html" %}
+
+<div class="flex flex-1">
+
+  {% include "partials/dashboard_aside.html" %}
+
+  <main class="flex-1 p-6 max-w-3xl">
+
+    <div class="mb-6">
+      <h1 class="text-xl font-semibold text-slate-900 dark:text-white">
+        Edit Member
+      </h1>
+      <p class="text-sm text-slate-500">
+        Update member information.
+      </p>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow border border-slate-200 dark:border-slate-700 p-6">
+
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        {{ form|crispy }}
+
+        <div class="flex items-center justify-end gap-3 pt-4">
+
+          <a href="{% url 'members_list' %}"
+             class="px-4 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700">
+            Cancel
+          </a>
+
+          <button
+            type="submit"
+            class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary/90 transition">
+
+            <span class="material-symbols-outlined text-lg">
+              save
+            </span>
+
+            Save Changes
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </main>
+
+</div>
+
+{% endblock %}

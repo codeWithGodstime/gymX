@@ -43,12 +43,12 @@
 
   </td>
   <td class="px-6 py-4 text-right">
-    <button class="text-slate-400 hover:text-primary transition-colors">
+    <a href="{% url 'member_edit' member.id %}" class="text-slate-400 hover:text-primary transition-colors">
       <span class="material-symbols-outlined">edit_square</span>
-    </button>
-    <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ml-3">
+    </a>
+    <!-- <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ml-3">
       <span class="material-symbols-outlined">more_vert</span>
-    </button>
+    </button> -->
   </td>
 </tr>
 {% empty %}
