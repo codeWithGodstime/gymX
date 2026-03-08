@@ -8,7 +8,7 @@
         </div>
         <nav class="flex flex-col gap-2">
             <a href="{% url 'dashboard_overview' %}"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'overview' %}bg-primary/10 text-primary{% else %}text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800{% endif %}">
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'dashboard_overview' %}bg-primary/10 text-primary{% else %}text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800{% endif %}">
                 <span class="material-symbols-outlined">dashboard</span>
                 <p class="text-sm font-semibold">Overview</p>
             </a>
