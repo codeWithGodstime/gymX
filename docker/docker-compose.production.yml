@@ -23,6 +23,8 @@ services:
       - POSTGRES_DB=${DB_POSTGRES_DB}
       - POSTGRES_USER=${DB_POSTGRES_USER}
       - POSTGRES_PASSWORD=${DB_POSTGRES_PASSWORD}
+    env_file:
+      - ../.env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
