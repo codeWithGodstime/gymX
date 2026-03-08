@@ -15,6 +15,9 @@ services:
     command: "gunicorn --bind 0.0.0.0:8000 gymx.wsgi:application"
     expose:
       - "8000"
+    volumes:
+      - static_files:/app/staticfiles
+      - media_files:/app/media
     restart: always
 
   db:
@@ -27,8 +30,6 @@ services:
       - ../.env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    ports:
-      - "5432:5432"
     restart: always
 
   nginx:
@@ -37,9 +38,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+      - static_files:/app/staticfiles
+      - media_files:/app/media
     depends_on:
       - web
     restart: always
@@ -60,10 +63,10 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
-    command: server /data
+    command: server /data --console-address ":9001"
     ports:
       - "9000:9000"
-      - "9001:9001"  # MinIO console
+      - "9001:9001"
     volumes:
       - minio_data:/data
     restart: always
@@ -71,3 +74,5 @@ services:
 volumes:
   postgres_data:
   minio_data:
+  static_files:
+  media_files:
